@@ -214,6 +214,60 @@
             width: 1px;
             height: 60px;
         }
+
+        /* --- 📱 스마트폰 모바일 최적화 반응형 디자인 --- */
+        @media (max-width: 768px) {
+            #overlay {
+                padding: 15px;
+            }
+
+            .system-title {
+                font-size: 20px;
+                letter-spacing: 2px;
+            }
+
+            .status-info {
+                font-size: 10px;
+            }
+
+            .alert-box {
+                top: 70px;
+                right: 15px;
+                width: 200px;
+                padding: 12px;
+            }
+
+            .news-box {
+                top: 170px;
+                right: 15px;
+                width: 200px;
+                padding: 12px;
+            }
+
+            .news-title {
+                font-size: 11px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .refresh-btn {
+                width: 100%;
+                text-align: center;
+                padding: 5px;
+                font-size: 11px;
+            }
+
+            .bottom-left-coords {
+                bottom: 30px;
+                left: 15px;
+                font-size: 14px;
+            }
+
+            .crosshair {
+                transform: translate(-50%, -50%) scale(0.6);
+            }
+        }
     </style>
 </head>
 
