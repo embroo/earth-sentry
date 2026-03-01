@@ -87,6 +87,74 @@
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
         }
 
+        .news-box {
+            position: absolute;
+            top: calc(18% + 130px);
+            right: 40px;
+            background: rgba(0, 20, 0, 0.4);
+            border: 1px solid #40ff00;
+            padding: 15px;
+            color: #40ff00;
+            width: 280px;
+            box-shadow: 0 0 20px rgba(64, 255, 0, 0.1);
+        }
+
+        .news-title {
+            font-weight: bold;
+            color: #f00;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px #f00;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .refresh-btn {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #40ff00;
+            color: #40ff00;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 6px 10px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(64, 255, 0, 0.4);
+            transition: all 0.2s;
+            pointer-events: auto;
+            /* 중요: 클릭 가능하도록 설정 */
+        }
+
+        .refresh-btn:hover {
+            background: #40ff00;
+            color: #000;
+            text-shadow: none;
+        }
+
+        .refresh-btn:active {
+            box-shadow: 0 0 20px rgba(64, 255, 0, 0.9);
+        }
+
+        .news-item {
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 10px;
+            border-bottom: 1px dotted rgba(64, 255, 0, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .news-time {
+            font-size: 10px;
+            color: #88ff88;
+            margin-top: 4px;
+            opacity: 0.7;
+        }
+
         .bottom-left-coords {
             position: absolute;
             bottom: 150px;
@@ -163,8 +231,18 @@
 
         <div class="alert-box">
             <div style="font-weight: bold; color: #f00;">[ TACTICAL STATUS ]</div>
-            <div style="color: #40ff00; margin-top: 5px;">REGION: CENTRAL_ASIA</div>
+            <div id="tactical-region" style="color: #40ff00; margin-top: 5px;">REGION: GLOBAL_SCAN...</div>
             <div style="margin-top: 8px; font-size: 18px; font-weight: bold;">WAR_CONDITION_CONFIRMED</div>
+        </div>
+
+        <div class="news-box">
+            <div class="news-title">
+                <span>[ LIVE INTEL FEED ]</span>
+                <button id="refresh-btn" class="refresh-btn" onclick="fetchLiveIntel(true)">[ FORCE REFRESH ]</button>
+            </div>
+            <div id="news-content">
+                <div class="news-item">CONNECTING TO SECURE SATELLITE...<br><span class="news-time">STANDBY</span></div>
+            </div>
         </div>
 
         <div class="bottom-left-coords">
@@ -173,9 +251,6 @@
         </div>
 
         <div class="footer">
-            <div class="peace-message-box">
-                세상의 평화를 지키는 여러분 / Guardians of World Peace
-            </div>
         </div>
     </div>
 
@@ -252,31 +327,51 @@
             ring.rotation.y = (i / 18) * Math.PI * 2; mainGroup.add(ring);
         }
 
-        // --- 🚨 심장 박동 붉은 위기 마커 (Pulse Marker) ---
-        const lat = 33.722, lon = 70.412;
-        const phi = (90 - lat) * (Math.PI / 180);
-        const theta = (lon + 180) * (Math.PI / 180);
-        const pos = new THREE.Vector3(
-            -(1.02 * Math.sin(phi) * Math.cos(theta)),
-            1.02 * Math.cos(phi),
-            1.02 * Math.sin(phi) * Math.sin(theta)
-        );
+        // --- 🚨 실시간 지명 좌표 연동 및 동적 마커 렌더링 시스템 ---
+        const markersGroup = new THREE.Group();
+        mainGroup.add(markersGroup);
+        let activeMarkers = [];
 
-        const marker = new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 16), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
-        marker.position.copy(pos);
-        mainGroup.add(marker);
+        function createCrisisMarker(lat, lon) {
+            const phi = (90 - lat) * (Math.PI / 180);
+            const theta = (lon + 180) * (Math.PI / 180);
+            const pos = new THREE.Vector3(
+                -(1.02 * Math.sin(phi) * Math.cos(theta)),
+                1.02 * Math.cos(phi),
+                1.02 * Math.sin(phi) * Math.sin(theta)
+            );
+            const marker = new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 16), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
+            marker.position.copy(pos);
+            markersGroup.add(marker);
 
-        // Pulse Glow rings
-        const rings = [];
-        for (let i = 0; i < 3; i++) {
-            const rGeo = new THREE.TorusGeometry(0.06, 0.006, 8, 64);
-            const rMat = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.8 });
-            const rMesh = new THREE.Mesh(rGeo, rMat);
-            rMesh.position.copy(pos);
-            rMesh.lookAt(0, 0, 0);
-            mainGroup.add(rMesh);
-            rings.push({ mesh: rMesh, offset: i * 0.5 });
+            const rings = [];
+            for (let i = 0; i < 3; i++) {
+                const rGeo = new THREE.TorusGeometry(0.06, 0.006, 8, 64);
+                const rMat = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.8 });
+                const rMesh = new THREE.Mesh(rGeo, rMat);
+                rMesh.position.copy(pos);
+                rMesh.lookAt(0, 0, 0);
+                markersGroup.add(rMesh);
+                rings.push({ mesh: rMesh, offset: i * 0.5 });
+            }
+            activeMarkers.push({ marker, rings });
         }
+
+        // 지명 -> 좌표 맵핑 사전
+        const locationDB = {
+            '이란': [32.4279, 53.6880], '우크라이나': [48.3794, 31.1656],
+            '러시아': [61.5240, 105.3188], '이스라엘': [31.0461, 34.8516],
+            '팔레스타인': [31.9522, 35.2332], '가자': [31.5, 34.4667],
+            '파키스탄': [30.3753, 69.3451], '아프간': [33.9391, 67.7100],
+            '미국': [37.0902, -95.7129], '중국': [35.8617, 104.1954],
+            '대만': [23.6978, 120.9605], '레바논': [33.8547, 35.8623],
+            '시리아': [34.8021, 38.9968], '예멘': [15.5527, 48.5164],
+            '북한': [40.3399, 127.5101], '수단': [12.8628, 30.2176],
+            '이라크': [33.2232, 43.6793]
+        };
+
+        // 기본 마커 작동 보장 (파키스탄) - 데이터가 없을 시 기본 표시
+        createCrisisMarker(33.722, 70.412);
 
         // 조명
         const light = new THREE.PointLight(0x40ff00, 1.5, 50);
@@ -299,14 +394,16 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            // 심장 박동 Pulse 애니메이션
-            const time = Date.now() * 0.002;
-            rings.forEach((r, idx) => {
-                const scale = ((Date.now() * 0.003 + r.offset) % 1.5) * 1.5;
-                r.mesh.scale.set(scale, scale, 1);
-                r.mesh.material.opacity = Math.max(0, 1 - scale / 2);
+            // 심장 박동 Pulse 다중 마커 애니메이션 적용
+            activeMarkers.forEach(item => {
+                item.rings.forEach((r) => {
+                    const scale = ((Date.now() * 0.003 + r.offset) % 1.5) * 1.5;
+                    r.mesh.scale.set(scale, scale, 1);
+                    r.mesh.material.opacity = Math.max(0, 1 - Math.pow(scale / 1.5, 2));
+                });
+                const mScale = 1 + Math.sin(Date.now() * 0.01) * 0.2;
+                item.marker.scale.set(mScale, mScale, mScale);
             });
-            marker.scale.set(1 + Math.sin(Date.now() * 0.01) * 0.2, 1 + Math.sin(Date.now() * 0.01) * 0.2, 1 + Math.sin(Date.now() * 0.01) * 0.2);
 
             // 실시간 좌표 업데이트
             const dir = new THREE.Vector3();
@@ -327,6 +424,92 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
+
+        // --- 📡 실시간 RSS 뉴스 피드 연동 (Google News) ---
+        function fetchLiveIntel(isManual = false) {
+            const newsContent = document.getElementById('news-content');
+            const refreshBtn = document.getElementById('refresh-btn');
+
+            if (isManual && refreshBtn) {
+                // 수동 스캔 시 시각적 사이버 효과 추가
+                refreshBtn.innerText = "[ SCANNING... ]";
+                refreshBtn.style.color = "#ff0000";
+                refreshBtn.style.borderColor = "#ff0000";
+                refreshBtn.style.boxShadow = "0 0 15px rgba(255, 0, 0, 0.5)";
+                newsContent.innerHTML = '<div class="news-item" style="color:#40ff00; text-align:center;"><br>SATELLITE UPLINK INITIATED...<br><span class="news-time">MANUAL OVERRIDE ACCEPTED</span><br></div>';
+            }
+
+            // 구글 뉴스 RSS (검색어: 전쟁 OR 분쟁)
+            const rssUrl = 'https://news.google.com/rss/search?q=%EC%A0%84%EC%9F%81+OR+%EB%B6%84%EC%9F%81&hl=ko&gl=KR&ceid=KR:ko';
+            // CORS 우회용 무료 프록시(rss2json) 사용
+            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // 수동 스캔 종료 후 원래 상태 복구
+                    if (refreshBtn) {
+                        refreshBtn.innerText = "[ FORCE REFRESH ]";
+                        refreshBtn.style.color = "#40ff00";
+                        refreshBtn.style.borderColor = "#40ff00";
+                        refreshBtn.style.boxShadow = "0 0 8px rgba(64, 255, 0, 0.3)";
+                    }
+
+                    if (data.status === 'ok') {
+                        let html = '';
+                        let foundLocations = new Set();
+
+                        // 최신 3개 뉴스만 추출 및 스캔
+                        data.items.slice(0, 3).forEach(item => {
+                            const pubDate = new Date(item.pubDate);
+                            const timeStr = `${pubDate.getHours().toString().padStart(2, '0')}:${pubDate.getMinutes().toString().padStart(2, '0')}`;
+                            html += `
+                                <div class="news-item">
+                                    ${item.title}
+                                    <div class="news-time">SECURE MSG RCV // ${timeStr}</div>
+                                </div>
+                            `;
+                            // 문자열 스캔을 통한 지명(좌표) 찾기
+                            for (const loc in locationDB) {
+                                if (item.title.includes(loc)) foundLocations.add(loc);
+                            }
+                        });
+                        newsContent.innerHTML = html;
+
+                        // 스캔 된 지역이 뉴스에 있다면? 
+                        if (foundLocations.size > 0) {
+                            // 기존의 마커 전부 폐기
+                            while (markersGroup.children.length > 0) {
+                                markersGroup.remove(markersGroup.children[0]);
+                            }
+                            activeMarkers = [];
+
+                            // 새 뉴스 지역에 다중 마커 투하
+                            let regionNames = [];
+                            foundLocations.forEach(loc => {
+                                createCrisisMarker(locationDB[loc][0], locationDB[loc][1]);
+                                regionNames.push(loc);
+                            });
+
+                            // 상황창 텍스트 업데이트 
+                            document.getElementById('tactical-region').innerText = `REGION: ${regionNames.join(', ')}`;
+                        }
+                    }
+                })
+                .catch(err => {
+                    if (refreshBtn) {
+                        refreshBtn.innerText = "[ FORCE REFRESH ]";
+                        refreshBtn.style.color = "#40ff00";
+                        refreshBtn.style.borderColor = "#40ff00";
+                    }
+                    newsContent.innerHTML = '<div class="news-item" style="color:#f00;">ERROR: SIGNAL INTERCEPTED.</div>';
+                });
+        }
+
+        // 초기 로딩 후 데이터 가져오기 및 5분마다 갱신
+        setTimeout(fetchLiveIntel, 1000);
+        setInterval(fetchLiveIntel, 300000);
+
     </script>
 </body>
 

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EARTH SENTRY V 2.7 - STRATEGIC COMMAND CENTER</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --neon-green: #00ff41;
+            --neon-red: #ff003c;
+            --neon-yellow: #fbee03;
+            --bg-dark: #050505;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--neon-green);
+            font-family: 'Share Tech Mono', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Scanline Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 100;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .dashboard {
+            width: 95vw;
+            height: 90vh;
+            border: 1px solid var(--neon-green);
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 20, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2) inset;
+            position: relative;
+        }
+
+        .header {
+            padding: 15px;
+            border-bottom: 1px solid var(--neon-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 40, 0, 0.5);
+        }
+
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Server Visualizer */
+        .server-status {
+            flex: 2;
+            position: relative;
+            background-image:
+                linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            border-right: 1px solid var(--neon-green);
+        }
+
+        .node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: var(--neon-green);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--neon-green);
+            transition: all 0.3s ease;
+        }
+
+        /* Threat Gauge */
+        .threat-container {
+            width: 400px;
+            margin-right: 20px;
+        }
+
+        .gauge-label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .threat-level {
+            width: 100%;
+            height: 20px;
+            background-color: #111;
+            border: 1px solid var(--neon-green);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .threat-level-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-yellow));
+            box-shadow: 0 0 15px var(--neon-green);
+            transition: width 0.5s cubic-bezier(0.1, 0.7, 1.0, 0.1), background 0.5s;
+        }
+
+        /* LOG PANEL */
+        .attack-log {
+            flex: 1;
+            padding: 15px;
+            background: rgba(0, 10, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .log-list {
+            flex: 1;
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+            animation: slideIn 0.3s ease-out;
+            white-space: nowrap;
+        }
+
+        .log-time {
+            color: #888;
+            margin-right: 10px;
+        }
+
+        .log-type {
+            font-weight: bold;
+        }
+
+        .danger {
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Red Alert Effect */
+        .alert-active {
+            animation: redAlert 0.5s infinite alternate;
+        }
+
+        @keyframes redAlert {
+            from {
+                box-shadow: 0 0 0px var(--neon-red);
+            }
+
+            to {
+                box-shadow: 0 0 50px var(--neon-red) inset;
+            }
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 0 10px var(--neon-green);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard" id="mainDashboard">
+        <div class="header">
+            <div class="title"><span class="status-dot"></span>EARTH SENTRY V 2.7 [AUTHORIZED: NO-IN-OH]</div>
+            <div class="threat-container">
+                <div class="gauge-label">
+                    <span>SECURITY THREAT LEVEL</span>
+                    <span id="threatValue">0%</span>
+                </div>
+                <div class="threat-level">
+                    <div class="threat-level-bar" id="threatLevelBar"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-container">
+            <div class="server-status" id="serverStatus"></div>
+            <div class="attack-log">
+                <div
+                    style="border-bottom: 1px solid var(--neon-green); padding-bottom: 10px; margin-bottom: 10px; font-weight: bold;">
+                    [ LIVE INCIDENT LOG ]</div>
+                <div class="log-list" id="attackLog"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const serverStatus = document.getElementById('serverStatus');
+        const attackLog = document.getElementById('attackLog');
+        const threatLevelBar = document.getElementById('threatLevelBar');
+        const threatValue = document.getElementById('threatValue');
+        const mainDashboard = document.getElementById('mainDashboard');
+
+        // Create initial nodes
+        function initNodes() {
+            for (let i = 0; i < 30; i++) {
+                const node = document.createElement('div');
+                node.classList.add('node');
+                node.style.left = `${Math.random() * 92}%`;
+                node.style.top = `${Math.random() * 92}%`;
+                serverStatus.appendChild(node);
+            }
+        }
+        initNodes();
+
+        // Randomly move and blink nodes
+        setInterval(() => {
+            const nodes = document.querySelectorAll('.node');
+            const target = nodes[Math.floor(Math.random() * nodes.length)];
+            target.style.opacity = Math.random() > 0.5 ? '0.3' : '1';
+            if (Math.random() > 0.8) {
+                target.style.left = `${Math.random() * 92}%`;
+                target.style.top = `${Math.random() * 92}%`;
+            }
+        }, 200);
+
+        let attackCount = 0;
+        const maxAttacks = 50; // Max to reach 100%
+
+        function addAttackLog() {
+            const ipAddresses = ['192.168.1.' + Math.floor(Math.random() * 255), '10.0.0.' + Math.floor(Math.random() * 255), '172.16.8.' + Math.floor(Math.random() * 255), '45.12.33.' + Math.floor(Math.random() * 255)];
+            const attackTypes = ['DDoS Flood', 'SQL Injection-XSS', 'Phishing Attempt', 'Brute Force Entry', 'Rootkit Injection', 'Malware Sync'];
+
+            const logEntry = document.createElement('div');
+            logEntry.classList.add('log-entry');
+            const time = new Date().toLocaleTimeString();
+            const isDanger = Math.random() > 0.7;
+
+            logEntry.innerHTML = `
+                <span class="log-time">[${time}]</span>
+                <span class="log-ip">${ipAddresses[Math.floor(Math.random() * ipAddresses.length)]}</span>
+                <span class="log-type ${isDanger ? 'danger' : ''}"> » ${attackTypes[Math.floor(Math.random() * attackTypes.length)]}</span>
+            `;
+
+            attackLog.prepend(logEntry);
+            if (attackLog.children.length > 20) attackLog.removeChild(attackLog.lastChild);
+
+            attackCount++;
+            updateThreatLevel();
+        }
+
+        setInterval(addAttackLog, 800);
+
+        function updateThreatLevel() {
+            const percent = Math.min((attackCount / maxAttacks) * 100, 100);
+            threatLevelBar.style.width = `${percent}%`;
+            threatValue.textContent = `${Math.floor(percent)}%`;
+
+            // Color shift logic
+            if (percent > 80) {
+                threatLevelBar.style.background = 'var(--neon-red)';
+                threatLevelBar.style.boxShadow = '0 0 20px var(--neon-red)';
+                mainDashboard.classList.add('alert-active');
+            } else if (percent > 40) {
+                threatLevelBar.style.background = 'var(--neon-yellow)';
+                threatLevelBar.style.boxShadow = '0 0 15px var(--neon-yellow)';
+            } else {
+                threatLevelBar.style.background = 'var(--neon-green)';
+            }
+
+            // Auto reset if 100%
+            if (percent >= 100) {
+                setTimeout(() => {
+                    attackCount = 0;
+                    mainDashboard.classList.remove('alert-active');
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+
+</html>
