@@ -580,8 +580,14 @@
             // CORS 우회용 무료 프록시(rss2json) 사용
             const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
-            fetch(apiUrl)
-                .then(response => response.json())
+            // 강제 딜레이 연출 (위성 연결 시각 효과용, 수동 스캔 시에만 1.5초 지연)
+            const delayTime = isManual ? 1500 : 0;
+
+            Promise.all([
+                fetch(apiUrl),
+                new Promise(resolve => setTimeout(resolve, delayTime))
+            ])
+                .then(([response]) => response.json())
                 .then(data => {
                     // 수동 스캔 종료 후 원래 상태 복구
                     if (refreshBtn) {
