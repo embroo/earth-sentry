@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EARTH SENTRY v2.7 - NIGHT WATCH COMMAND</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            color: #40ff00;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        /* V1.2 스타일 정통 스캔라인 */
+        body::before {
+            content: " ";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 3px 100%;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            padding: 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 500;
+        }
+
+        .top-ui {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .system-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            color: #40ff00;
+            text-shadow: 0 0 15px #40ff00;
+        }
+
+        .status-info {
+            text-align: right;
+            font-size: 13px;
+            letter-spacing: 1px;
+            color: #40ff00;
+            line-height: 1.6;
+        }
+
+        .alert-box {
+            position: absolute;
+            top: 18%;
+            right: 40px;
+            background: rgba(0, 20, 0, 0.4);
+            border: 1px solid #40ff00;
+            padding: 20px;
+            color: #ff0000;
+            width: 280px;
+            text-shadow: 0 0 5px #f00;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
+        }
+
+        .bottom-left-coords {
+            position: absolute;
+            bottom: 150px;
+            left: 40px;
+            font-size: 18px;
+            line-height: 1.5;
+            color: #40ff00;
+            text-shadow: 0 0 8px #40ff00;
+        }
+
+        .footer {
+            width: 100%;
+            text-align: center;
+        }
+
+        .peace-message-box {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 50px;
+            border: 1px solid #40ff00;
+            color: #40ff00;
+            display: inline-block;
+            box-shadow: 0 0 30px rgba(64, 255, 0, 0.4);
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(64, 255, 0, 0.3);
+            border-radius: 50%;
+            z-index: 100;
+        }
+
+        .crosshair::before,
+        .crosshair::after {
+            content: "";
+            position: absolute;
+            background: #40ff00;
+            opacity: 0.5;
+        }
+
+        .crosshair::before {
+            top: 50%;
+            left: -10px;
+            width: 60px;
+            height: 1px;
+        }
+
+        .crosshair::after {
+            left: 50%;
+            top: -10px;
+            width: 1px;
+            height: 60px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="crosshair"></div>
+    <div id="overlay">
+        <div class="top-ui">
+            <div class="system-title">EARTH SENTRY v2.7</div>
+            <div class="status-info">
+                MODE: NIGHT_VISION_SENTRY<br>
+                FEED: LIVE_ENCRYPTED<br>
+                INTEL: OMEGA_CLASS
+            </div>
+        </div>
+
+        <div class="alert-box">
+            <div style="font-weight: bold; color: #f00;">[ TACTICAL STATUS ]</div>
+            <div style="color: #40ff00; margin-top: 5px;">REGION: CENTRAL_ASIA</div>
+            <div style="margin-top: 8px; font-size: 18px; font-weight: bold;">WAR_CONDITION_CONFIRMED</div>
+        </div>
+
+        <div class="bottom-left-coords">
+            <div id="lat-val">LAT: 33.7224</div>
+            <div id="lon-val">LON: 70.4128</div>
+        </div>
+
+        <div class="footer">
+            <div class="peace-message-box">
+                세상의 평화를 지키는 여러분 / Guardians of World Peace
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        camera.position.z = 3.8;
+
+        const mainGroup = new THREE.Group();
+        scene.add(mainGroup);
+
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.setCrossOrigin('anonymous');
+
+        // --- 🌏 고정밀 야경 지구본 (Night Lights) ---
+        const sphereGeo = new THREE.SphereGeometry(1, 64, 64);
+
+        // 베이스 지형 (어두운 지형)
+        const landMat = new THREE.MeshPhongMaterial({
+            color: 0x001100,
+            emissive: 0x000500,
+            shininess: 10
+        });
+        const earthMesh = new THREE.Mesh(sphereGeo, landMat);
+        mainGroup.add(earthMesh);
+
+        // 야경 도시 불빛 오버레이 (Cloud 제거 완료!)
+        textureLoader.load('https://threejs.org/examples/textures/planets/earth_lights_2048.png', (nightTexture) => {
+            const nightMat = new THREE.MeshBasicMaterial({
+                map: nightTexture,
+                transparent: true,
+                opacity: 0.9,
+                blending: THREE.AdditiveBlending,
+                color: 0x40ff00 // 야경 불빛도 야광 그린 톤으로 통일!
+            });
+            const nightLayer = new THREE.Mesh(new THREE.SphereGeometry(1.002, 64, 64), nightMat);
+            mainGroup.add(nightLayer);
+        });
+
+        // 지형 윤곽선 (사이버 감성 유지)
+        textureLoader.load('https://raw.githubusercontent.com/tbaltrushaitis/threejs-earth/master/assets/textures/planets/earth_atmo_2048.jpg', (maskTexture) => {
+            const maskMat = new THREE.MeshBasicMaterial({
+                map: maskTexture,
+                transparent: true,
+                opacity: 0.3,
+                color: 0x40ff00,
+                blending: THREE.AdditiveBlending
+            });
+            const maskLayer = new THREE.Mesh(new THREE.SphereGeometry(1.005, 64, 64), maskMat);
+            mainGroup.add(maskLayer);
+        });
+
+        // --- 🌐 위도 & 경도 그리드 시스템 ---
+        const gridMat = new THREE.MeshBasicMaterial({ color: 0x40ff00, transparent: true, opacity: 0.1 });
+        // 위도
+        for (let i = -8; i <= 8; i++) {
+            const rad = (i * Math.PI) / 18;
+            const y = Math.sin(rad);
+            const r = Math.cos(rad);
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.001, 8, 100), gridMat);
+            ring.rotation.x = Math.PI / 2; ring.position.y = y; mainGroup.add(ring);
+        }
+        // 경도
+        for (let i = 0; i < 18; i++) {
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(1, 0.001, 8, 100), gridMat);
+            ring.rotation.y = (i / 18) * Math.PI * 2; mainGroup.add(ring);
+        }
+
+        // --- 🚨 심장 박동 붉은 위기 마커 (Pulse Marker) ---
+        const lat = 33.722, lon = 70.412;
+        const phi = (90 - lat) * (Math.PI / 180);
+        const theta = (lon + 180) * (Math.PI / 180);
+        const pos = new THREE.Vector3(
+            -(1.02 * Math.sin(phi) * Math.cos(theta)),
+            1.02 * Math.cos(phi),
+            1.02 * Math.sin(phi) * Math.sin(theta)
+        );
+
+        const marker = new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 16), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
+        marker.position.copy(pos);
+        mainGroup.add(marker);
+
+        // Pulse Glow rings
+        const rings = [];
+        for (let i = 0; i < 3; i++) {
+            const rGeo = new THREE.TorusGeometry(0.06, 0.006, 8, 64);
+            const rMat = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.8 });
+            const rMesh = new THREE.Mesh(rGeo, rMat);
+            rMesh.position.copy(pos);
+            rMesh.lookAt(0, 0, 0);
+            mainGroup.add(rMesh);
+            rings.push({ mesh: rMesh, offset: i * 0.5 });
+        }
+
+        // 조명
+        const light = new THREE.PointLight(0x40ff00, 1.5, 50);
+        light.position.set(5, 5, 5);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0x40ff00, 0.3));
+
+        // --- 🖱️ 벨벳 부드러운 카메라 컨트롤 ---
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05; // 부드러운 멈춤
+        controls.rotateSpeed = 0.8;
+        controls.zoomSpeed = 1.2;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.4;
+
+        const latDisp = document.getElementById('lat-val');
+        const lonDisp = document.getElementById('lon-val');
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 심장 박동 Pulse 애니메이션
+            const time = Date.now() * 0.002;
+            rings.forEach((r, idx) => {
+                const scale = ((Date.now() * 0.003 + r.offset) % 1.5) * 1.5;
+                r.mesh.scale.set(scale, scale, 1);
+                r.mesh.material.opacity = Math.max(0, 1 - scale / 2);
+            });
+            marker.scale.set(1 + Math.sin(Date.now() * 0.01) * 0.2, 1 + Math.sin(Date.now() * 0.01) * 0.2, 1 + Math.sin(Date.now() * 0.01) * 0.2);
+
+            // 실시간 좌표 업데이트
+            const dir = new THREE.Vector3();
+            camera.getWorldDirection(dir);
+            dir.negate();
+            const currentLat = Math.asin(dir.y) * (180 / Math.PI);
+            const currentLon = Math.atan2(dir.z, dir.x) * (180 / Math.PI);
+            latDisp.innerHTML = `LAT: ${currentLat.toFixed(4)}`;
+            lonDisp.innerHTML = `LON: ${currentLon.toFixed(4)}`;
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+
+</html>
