@@ -569,12 +569,12 @@
                 newsContent.innerHTML = '<div class="news-item" style="color:#40ff00; text-align:center;">' + i18n[currentLang]['uplink'] + '</div>';
             }
 
-            // 구글 뉴스 RSS (언어 설정에 따라 북미/한국 서버 및 검색어 변경)
+            // 구글 뉴스 RSS (언어 설정에 따라 북미/한국 접속 및 24시간 이내 주요국 언론 뉴스 필터링)
             let rssUrl = '';
             if (currentLang === 'en') {
-                rssUrl = 'https://news.google.com/rss/search?q=war+OR+conflict+OR+military&hl=en-US&gl=US&ceid=US:en';
+                rssUrl = 'https://news.google.com/rss/search?q=(war+OR+conflict+OR+military)+when:1d&hl=en-US&gl=US&ceid=US:en';
             } else {
-                rssUrl = 'https://news.google.com/rss/search?q=%EC%A0%84%EC%9F%81+OR+%EB%B6%84%EC%9F%81+OR+%EA%B5%B0%EC%82%AC&hl=ko&gl=KR&ceid=KR:ko';
+                rssUrl = 'https://news.google.com/rss/search?q=(%EC%A0%84%EC%9F%81+OR+%EB%B6%84%EC%9F%81+OR+%EA%B5%B0%EC%82%AC)+site:yna.co.kr+OR+site:ytn.co.kr+OR+site:kbs.co.kr+OR+site:sbs.co.kr+OR+site:mbc.co.kr+when:1d&hl=ko&gl=KR&ceid=KR:ko';
             }
 
             // CORS 우회용 무료 프록시(rss2json) 사용
