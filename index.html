@@ -275,27 +275,34 @@
     <div class="crosshair"></div>
     <div id="overlay">
         <div class="top-ui">
-            <div class="system-title">EARTH SENTRY v2.7</div>
-            <div class="status-info">
-                MODE: NIGHT_VISION_SENTRY<br>
-                FEED: LIVE_ENCRYPTED<br>
-                INTEL: OMEGA_CLASS
+            <div class="system-title" data-i18n="title">EARTH SENTRY v2.8</div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
+                <button class="refresh-btn" onclick="toggleLanguage()">ENG / KOR</button>
+                <div class="status-info">
+                    <span data-i18n="mode">MODE: NIGHT_VISION_SENTRY</span><br>
+                    <span data-i18n="feed">FEED: LIVE_ENCRYPTED</span><br>
+                    <span data-i18n="intel">INTEL: OMEGA_CLASS</span>
+                </div>
             </div>
         </div>
 
         <div class="alert-box">
-            <div style="font-weight: bold; color: #f00;">[ TACTICAL STATUS ]</div>
-            <div id="tactical-region" style="color: #40ff00; margin-top: 5px;">REGION: GLOBAL_SCAN...</div>
-            <div style="margin-top: 8px; font-size: 18px; font-weight: bold;">WAR_CONDITION_CONFIRMED</div>
+            <div style="font-weight: bold; color: #f00;" data-i18n="tactical_title">[ TACTICAL STATUS ]</div>
+            <div id="tactical-region" style="color: #40ff00; margin-top: 5px;" data-i18n="region_scan">REGION:
+                GLOBAL_SCAN...</div>
+            <div style="margin-top: 8px; font-size: 18px; font-weight: bold;" data-i18n="condition">
+                WAR_CONDITION_CONFIRMED</div>
         </div>
 
         <div class="news-box">
             <div class="news-title">
-                <span>[ LIVE INTEL FEED ]</span>
-                <button id="refresh-btn" class="refresh-btn" onclick="fetchLiveIntel(true)">[ FORCE REFRESH ]</button>
+                <span data-i18n="live_feed">[ LIVE INTEL FEED ]</span>
+                <button id="refresh-btn" class="refresh-btn" onclick="fetchLiveIntel(true)" data-i18n="btn_refresh">[
+                    FORCE REFRESH ]</button>
             </div>
             <div id="news-content">
-                <div class="news-item">CONNECTING TO SECURE SATELLITE...<br><span class="news-time">STANDBY</span></div>
+                <div class="news-item" data-i18n="standby">CONNECTING TO SECURE SATELLITE...<br><span
+                        class="news-time">STANDBY</span></div>
             </div>
         </div>
 
@@ -411,17 +418,25 @@
             activeMarkers.push({ marker, rings });
         }
 
-        // 지명 -> 좌표 맵핑 사전
+        // 지명 -> 좌표 맵핑 사전 (다국어 지원)
         const locationDB = {
-            '이란': [32.4279, 53.6880], '우크라이나': [48.3794, 31.1656],
-            '러시아': [61.5240, 105.3188], '이스라엘': [31.0461, 34.8516],
-            '팔레스타인': [31.9522, 35.2332], '가자': [31.5, 34.4667],
-            '파키스탄': [30.3753, 69.3451], '아프간': [33.9391, 67.7100],
-            '미국': [37.0902, -95.7129], '중국': [35.8617, 104.1954],
-            '대만': [23.6978, 120.9605], '레바논': [33.8547, 35.8623],
-            '시리아': [34.8021, 38.9968], '예멘': [15.5527, 48.5164],
-            '북한': [40.3399, 127.5101], '수단': [12.8628, 30.2176],
-            '이라크': [33.2232, 43.6793]
+            '이란/Iran': { coords: [32.4279, 53.6880], keywords: ['이란', 'Iran'] },
+            '우크라이나/Ukraine': { coords: [48.3794, 31.1656], keywords: ['우크라이나', 'Ukraine'] },
+            '러시아/Russia': { coords: [61.5240, 105.3188], keywords: ['러시아', 'Russia'] },
+            '이스라엘/Israel': { coords: [31.0461, 34.8516], keywords: ['이스라엘', 'Israel'] },
+            '팔레스타인/Palestine': { coords: [31.9522, 35.2332], keywords: ['팔레스타인', 'Palestine'] },
+            '가자/Gaza': { coords: [31.5, 34.4667], keywords: ['가자', 'Gaza'] },
+            '파키스탄/Pakistan': { coords: [30.3753, 69.3451], keywords: ['파키스탄', 'Pakistan'] },
+            '아프간/Afghanistan': { coords: [33.9391, 67.7100], keywords: ['아프간', '아프가니스탄', 'Afghanistan'] },
+            '미국/USA': { coords: [37.0902, -95.7129], keywords: ['미국', '미 정부', 'USA', 'US'] },
+            '중국/China': { coords: [35.8617, 104.1954], keywords: ['중국', 'China'] },
+            '대만/Taiwan': { coords: [23.6978, 120.9605], keywords: ['대만', 'Taiwan'] },
+            '레바논/Lebanon': { coords: [33.8547, 35.8623], keywords: ['레바논', 'Lebanon'] },
+            '시리아/Syria': { coords: [34.8021, 38.9968], keywords: ['시리아', 'Syria'] },
+            '예멘/Yemen': { coords: [15.5527, 48.5164], keywords: ['예멘', 'Yemen'] },
+            '북한/North Korea': { coords: [40.3399, 127.5101], keywords: ['북한', 'North Korea'] },
+            '수단/Sudan': { coords: [12.8628, 30.2176], keywords: ['수단', 'Sudan'] },
+            '이라크/Iraq': { coords: [33.2232, 43.6793], keywords: ['이라크', 'Iraq'] }
         };
 
         // 기본 마커 작동 보장 (파키스탄) - 데이터가 없을 시 기본 표시
@@ -479,6 +494,61 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
+        // --- 🌐 다국어 지원 (i18n) 설정 ---
+        let currentLang = 'ko';
+
+        const i18n = {
+            'ko': {
+                'title': 'EARTH SENTRY v2.8',
+                'mode': 'MODE: NIGHT_VISION_SENTRY',
+                'feed': 'FEED: LIVE_ENCRYPTED',
+                'intel': 'INTEL: OMEGA_CLASS',
+                'tactical_title': '[ TACTICAL STATUS ]',
+                'region_scan': 'REGION: GLOBAL_SCAN...',
+                'condition': 'WAR_CONDITION_CONFIRMED',
+                'live_feed': '[ LIVE INTEL FEED ]',
+                'btn_refresh': '[ FORCE REFRESH ]',
+                'btn_scan': '[ SCANNING... ]',
+                'standby': 'CONNECTING TO SECURE SATELLITE...<br><span class="news-time">STANDBY</span>',
+                'uplink': '<br>SATELLITE UPLINK INITIATED...<br><span class="news-time">MANUAL OVERRIDE ACCEPTED</span><br>',
+                'error': 'ERROR: SIGNAL INTERCEPTED.',
+                'secure_msg': 'SECURE MSG RCV // ',
+                'region_prefix': 'REGION: '
+            },
+            'en': {
+                'title': 'EARTH SENTRY v2.8',
+                'mode': 'MODE: NIGHT_VISION_SENTRY',
+                'feed': 'FEED: LIVE_ENCRYPTED',
+                'intel': 'INTEL: OMEGA_CLASS',
+                'tactical_title': '[ TACTICAL STATUS ]',
+                'region_scan': 'REGION: GLOBAL_SCAN...',
+                'condition': 'WAR_CONDITION_CONFIRMED',
+                'live_feed': '[ LIVE INTEL FEED ]',
+                'btn_refresh': '[ FORCE REFRESH ]',
+                'btn_scan': '[ SCANNING... ]',
+                'standby': 'CONNECTING TO SECURE SATELLITE...<br><span class="news-time">STANDBY</span>',
+                'uplink': '<br>SATELLITE UPLINK INITIATED...<br><span class="news-time">MANUAL OVERRIDE ACCEPTED</span><br>',
+                'error': 'ERROR: SIGNAL INTERCEPTED.',
+                'secure_msg': 'SECURE MSG RCV // ',
+                'region_prefix': 'REGION: '
+            }
+        };
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) {
+                    el.innerHTML = i18n[lang][key];
+                }
+            });
+            fetchLiveIntel(true);
+        }
+
+        function toggleLanguage() {
+            setLanguage(currentLang === 'ko' ? 'en' : 'ko');
+        }
+
         // --- 📡 실시간 RSS 뉴스 피드 연동 (Google News) ---
         function fetchLiveIntel(isManual = false) {
             const newsContent = document.getElementById('news-content');
@@ -486,15 +556,21 @@
 
             if (isManual && refreshBtn) {
                 // 수동 스캔 시 시각적 사이버 효과 추가
-                refreshBtn.innerText = "[ SCANNING... ]";
+                refreshBtn.innerText = i18n[currentLang]['btn_scan'];
                 refreshBtn.style.color = "#ff0000";
                 refreshBtn.style.borderColor = "#ff0000";
                 refreshBtn.style.boxShadow = "0 0 15px rgba(255, 0, 0, 0.5)";
-                newsContent.innerHTML = '<div class="news-item" style="color:#40ff00; text-align:center;"><br>SATELLITE UPLINK INITIATED...<br><span class="news-time">MANUAL OVERRIDE ACCEPTED</span><br></div>';
+                newsContent.innerHTML = '<div class="news-item" style="color:#40ff00; text-align:center;">' + i18n[currentLang]['uplink'] + '</div>';
             }
 
-            // 구글 뉴스 RSS (검색어: 전쟁 OR 분쟁)
-            const rssUrl = 'https://news.google.com/rss/search?q=%EC%A0%84%EC%9F%81+OR+%EB%B6%84%EC%9F%81&hl=ko&gl=KR&ceid=KR:ko';
+            // 구글 뉴스 RSS (언어 설정에 따라 북미/한국 서버 및 검색어 변경)
+            let rssUrl = '';
+            if (currentLang === 'en') {
+                rssUrl = 'https://news.google.com/rss/search?q=war+OR+conflict+OR+military&hl=en-US&gl=US&ceid=US:en';
+            } else {
+                rssUrl = 'https://news.google.com/rss/search?q=%EC%A0%84%EC%9F%81+OR+%EB%B6%84%EC%9F%81+OR+%EA%B5%B0%EC%82%AC&hl=ko&gl=KR&ceid=KR:ko';
+            }
+
             // CORS 우회용 무료 프록시(rss2json) 사용
             const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
@@ -503,7 +579,7 @@
                 .then(data => {
                     // 수동 스캔 종료 후 원래 상태 복구
                     if (refreshBtn) {
-                        refreshBtn.innerText = "[ FORCE REFRESH ]";
+                        refreshBtn.innerText = i18n[currentLang]['btn_refresh'];
                         refreshBtn.style.color = "#40ff00";
                         refreshBtn.style.borderColor = "#40ff00";
                         refreshBtn.style.boxShadow = "0 0 8px rgba(64, 255, 0, 0.3)";
@@ -520,12 +596,13 @@
                             html += `
                                 <div class="news-item">
                                     ${item.title}
-                                    <div class="news-time">SECURE MSG RCV // ${timeStr}</div>
+                                    <div class="news-time">${i18n[currentLang]['secure_msg']}${timeStr}</div>
                                 </div>
                             `;
-                            // 문자열 스캔을 통한 지명(좌표) 찾기
-                            for (const loc in locationDB) {
-                                if (item.title.includes(loc)) foundLocations.add(loc);
+                            // 문자열 스캔을 통한 지명(좌표) 찾기 (다국어 키워드 검색)
+                            for (const [key, locData] of Object.entries(locationDB)) {
+                                const found = locData.keywords.some(kw => item.title.toLowerCase().includes(kw.toLowerCase()));
+                                if (found) foundLocations.add(key);
                             }
                         });
                         newsContent.innerHTML = html;
@@ -541,22 +618,24 @@
                             // 새 뉴스 지역에 다중 마커 투하
                             let regionNames = [];
                             foundLocations.forEach(loc => {
-                                createCrisisMarker(locationDB[loc][0], locationDB[loc][1]);
-                                regionNames.push(loc);
+                                createCrisisMarker(locationDB[loc].coords[0], locationDB[loc].coords[1]);
+                                // 선택된 언어에 맞춰서 지명 출력
+                                let displayName = currentLang === 'en' ? loc.split('/')[1] : loc.split('/')[0];
+                                regionNames.push(displayName);
                             });
 
                             // 상황창 텍스트 업데이트 
-                            document.getElementById('tactical-region').innerText = `REGION: ${regionNames.join(', ')}`;
+                            document.getElementById('tactical-region').innerText = i18n[currentLang]['region_prefix'] + regionNames.join(', ');
                         }
                     }
                 })
                 .catch(err => {
                     if (refreshBtn) {
-                        refreshBtn.innerText = "[ FORCE REFRESH ]";
+                        refreshBtn.innerText = i18n[currentLang]['btn_refresh'];
                         refreshBtn.style.color = "#40ff00";
                         refreshBtn.style.borderColor = "#40ff00";
                     }
-                    newsContent.innerHTML = '<div class="news-item" style="color:#f00;">ERROR: SIGNAL INTERCEPTED.</div>';
+                    newsContent.innerHTML = `<div class="news-item" style="color:#f00;">${i18n[currentLang]['error']}</div>`;
                 });
         }
 
