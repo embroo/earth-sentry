@@ -311,7 +311,7 @@
         </div>
 
         <div class="alert-box">
-            <div style="font-weight: bold; color: #f00;" data-i18n="tactical_title">[ TACTICAL STATUS ]</div>
+            <div style="font-weight: bold; color: var(--danger);" data-i18n="tactical_title">[ TACTICAL STATUS ]</div>
             <div id="tactical-region" style="color: var(--primary); margin-top: 5px;" data-i18n="region_scan">REGION:
                 GLOBAL_SCAN...</div>
             <div style="margin-top: 8px; font-size: 18px; font-weight: bold;" data-i18n="condition">
@@ -427,16 +427,16 @@
                 1.02 * Math.cos(phi),
                 1.02 * Math.sin(phi) * Math.sin(theta)
             );
-            const dangerHex = parseInt(modeData[currentMode].danger.replace('#', '0x'));
-            const marker = new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 16), new THREE.MeshBasicMaterial({ color: dangerHex }));
+            const dangerColor = modeData[currentMode].danger;
+            const marker = new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 16), new THREE.MeshBasicMaterial({ color: dangerColor }));
             marker.position.copy(pos);
             markersGroup.add(marker);
 
             const rings = [];
             for (let i = 0; i < 3; i++) {
-                const dangerHex = parseInt(modeData[currentMode].danger.replace('#', '0x'));
+                const dangerColor = modeData[currentMode].danger;
                 const rGeo = new THREE.TorusGeometry(0.06, 0.006, 8, 64);
-                const rMat = new THREE.MeshBasicMaterial({ color: dangerHex, transparent: true, opacity: 0.8 });
+                const rMat = new THREE.MeshBasicMaterial({ color: dangerColor, transparent: true, opacity: 0.8 });
                 const rMesh = new THREE.Mesh(rGeo, rMat);
                 rMesh.position.copy(pos);
                 rMesh.lookAt(0, 0, 0);
@@ -537,9 +537,9 @@
                 rssUrl: 'https://news.google.com/rss/search?q=(earthquake+OR+tsunami+OR+volcano)+when:1d&hl=en-US&gl=US&ceid=US:en'
             },
             'ECONOMY': {
-                primary: '#ffffff', danger: '#00ffff',
+                primary: '#00ffff', danger: '#00ffff',
                 title: 'EARTH SENTRY v2.8 - ECONOMY', tactical: 'MARKET_CRASH_WARNING', feed: 'FINANCIAL INDEX',
-                rssUrl: 'https://news.google.com/rss/search?q=("stock market"+OR+crash+OR+plunge)+when:1d&hl=en-US&gl=US&ceid=US:en'
+                rssUrl: 'https://news.google.com/rss/search?q=("stock market"+OR+crash+OR+plunge+OR+economy)+when:1d&hl=en-US&gl=US&ceid=US:en'
             },
             'PANDEMIC': {
                 primary: '#00fa9a', danger: '#adff2f',
@@ -558,12 +558,11 @@
             document.documentElement.style.setProperty('--danger-glow', data.danger + '80'); // 50% opacity
 
             if (typeof light !== 'undefined' && typeof ambientLight !== 'undefined') {
-                const primaryHex = parseInt(data.primary.replace('#', '0x'));
-                light.color.setHex(primaryHex);
-                ambientLight.color.setHex(primaryHex);
-                if (typeof gridMat !== 'undefined') gridMat.color.setHex(primaryHex);
-                if (typeof globalNightMat !== 'undefined') globalNightMat.color.setHex(primaryHex);
-                if (typeof globalMaskMat !== 'undefined') globalMaskMat.color.setHex(primaryHex);
+                light.color.set(data.primary);
+                ambientLight.color.set(data.primary);
+                if (typeof gridMat !== 'undefined') gridMat.color.set(data.primary);
+                if (typeof globalNightMat !== 'undefined') globalNightMat.color.set(data.primary);
+                if (typeof globalMaskMat !== 'undefined') globalMaskMat.color.set(data.primary);
             }
 
             // 텍스트 변환
