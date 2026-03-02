@@ -6,13 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EARTH SENTRY v2.7 - NIGHT WATCH COMMAND</title>
     <style>
+        :root {
+            --primary: #40ff00;
+            --primary-glow: rgba(64, 255, 0, 0.4);
+            --primary-glow-strong: rgba(64, 255, 0, 0.9);
+            --danger: #ff0000;
+            --danger-glow: rgba(255, 0, 0, 0.5);
+            --bg-color: rgba(0, 20, 0, 0.4);
+        }
+
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
 
         body {
             margin: 0;
             overflow: hidden;
             background-color: #000;
-            color: #40ff00;
+            color: var(--primary);
             font-family: 'Share Tech Mono', monospace;
         }
 
@@ -62,15 +71,15 @@
             font-size: 34px;
             font-weight: 700;
             letter-spacing: 6px;
-            color: #40ff00;
-            text-shadow: 0 0 15px #40ff00;
+            color: var(--primary);
+            text-shadow: 0 0 15px var(--primary);
         }
 
         .status-info {
             text-align: right;
             font-size: 13px;
             letter-spacing: 1px;
-            color: #40ff00;
+            color: var(--primary);
             line-height: 1.6;
         }
 
@@ -78,32 +87,32 @@
             position: absolute;
             top: 18%;
             right: 40px;
-            background: rgba(0, 20, 0, 0.4);
-            border: 1px solid #40ff00;
+            background: var(--bg-color);
+            border: 1px solid var(--primary);
             padding: 20px;
-            color: #ff0000;
+            color: var(--danger);
             width: 280px;
-            text-shadow: 0 0 5px #f00;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
+            text-shadow: 0 0 5px var(--danger);
+            box-shadow: 0 0 20px var(--danger-glow);
         }
 
         .news-box {
             position: absolute;
             top: calc(18% + 130px);
             right: 40px;
-            background: rgba(0, 20, 0, 0.4);
-            border: 1px solid #40ff00;
+            background: var(--bg-color);
+            border: 1px solid var(--primary);
             padding: 15px;
-            color: #40ff00;
+            color: var(--primary);
             width: 280px;
-            box-shadow: 0 0 20px rgba(64, 255, 0, 0.1);
+            box-shadow: 0 0 20px var(--primary-glow);
         }
 
         .news-title {
             font-weight: bold;
             color: #f00;
             margin-bottom: 10px;
-            text-shadow: 0 0 5px #f00;
+            text-shadow: 0 0 5px var(--danger);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -111,14 +120,14 @@
 
         .refresh-btn {
             background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #40ff00;
-            color: #40ff00;
+            border: 1px solid var(--primary);
+            color: var(--primary);
             font-family: 'Share Tech Mono', monospace;
             font-size: 12px;
             font-weight: bold;
             padding: 6px 10px;
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(64, 255, 0, 0.4);
+            box-shadow: 0 0 10px var(--primary-glow);
             transition: all 0.2s;
             pointer-events: auto;
             /* 중요: 클릭 가능하도록 설정 */
@@ -126,14 +135,14 @@
 
         @media (hover: hover) and (pointer: fine) {
             .refresh-btn:hover {
-                background: #40ff00;
+                background: var(--primary);
                 color: #000;
                 text-shadow: none;
             }
         }
 
         .refresh-btn:active {
-            box-shadow: 0 0 20px rgba(64, 255, 0, 0.9);
+            box-shadow: 0 0 20px var(--primary-glow-strong);
         }
 
         .news-item {
@@ -163,7 +172,7 @@
             left: 40px;
             font-size: 18px;
             line-height: 1.5;
-            color: #40ff00;
+            color: var(--primary);
             text-shadow: 0 0 8px #40ff00;
         }
 
@@ -175,8 +184,8 @@
         .peace-message-box {
             background: rgba(0, 0, 0, 0.9);
             padding: 15px 50px;
-            border: 1px solid #40ff00;
-            color: #40ff00;
+            border: 1px solid var(--primary);
+            color: var(--primary);
             display: inline-block;
             box-shadow: 0 0 30px rgba(64, 255, 0, 0.4);
             font-size: 18px;
@@ -199,7 +208,7 @@
         .crosshair::after {
             content: "";
             position: absolute;
-            background: #40ff00;
+            background: var(--primary);
             opacity: 0.5;
         }
 
@@ -283,7 +292,16 @@
         <div class="top-ui">
             <div class="system-title" data-i18n="title">EARTH SENTRY v2.8</div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
-                <button class="refresh-btn" onclick="toggleLanguage()">ENG / KOR</button>
+                <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end;">
+                    <button class="refresh-btn" onclick="setMode('WAR')"
+                        style="text-shadow:0 0 5px #ff0000; border-color:#ff0000;">[ WAR ]</button>
+                    <button class="refresh-btn" onclick="setMode('SEISMIC')"
+                        style="text-shadow:0 0 5px #ffa500; border-color:#ffa500;">[ SEISMIC ]</button>
+                    <button class="refresh-btn" onclick="setMode('ECONOMY')"
+                        style="text-shadow:0 0 5px #00ffff; border-color:#00ffff;">[ ECONOMY ]</button>
+                    <button class="refresh-btn" onclick="setMode('PANDEMIC')"
+                        style="text-shadow:0 0 5px #adff2f; border-color:#adff2f;">[ PANDEMIC ]</button>
+                </div>
                 <div class="status-info">
                     <span data-i18n="mode">MODE: NIGHT_VISION_SENTRY</span><br>
                     <span data-i18n="feed">FEED: LIVE_ENCRYPTED</span><br>
@@ -294,7 +312,7 @@
 
         <div class="alert-box">
             <div style="font-weight: bold; color: #f00;" data-i18n="tactical_title">[ TACTICAL STATUS ]</div>
-            <div id="tactical-region" style="color: #40ff00; margin-top: 5px;" data-i18n="region_scan">REGION:
+            <div id="tactical-region" style="color: var(--primary); margin-top: 5px;" data-i18n="region_scan">REGION:
                 GLOBAL_SCAN...</div>
             <div style="margin-top: 8px; font-size: 18px; font-weight: bold;" data-i18n="condition">
                 WAR_CONDITION_CONFIRMED</div>
@@ -407,14 +425,16 @@
                 1.02 * Math.cos(phi),
                 1.02 * Math.sin(phi) * Math.sin(theta)
             );
-            const marker = new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 16), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
+            const dangerHex = parseInt(modeData[currentMode].danger.replace('#', '0x'));
+            const marker = new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 16), new THREE.MeshBasicMaterial({ color: dangerHex }));
             marker.position.copy(pos);
             markersGroup.add(marker);
 
             const rings = [];
             for (let i = 0; i < 3; i++) {
+                const dangerHex = parseInt(modeData[currentMode].danger.replace('#', '0x'));
                 const rGeo = new THREE.TorusGeometry(0.06, 0.006, 8, 64);
-                const rMat = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.8 });
+                const rMat = new THREE.MeshBasicMaterial({ color: dangerHex, transparent: true, opacity: 0.8 });
                 const rMesh = new THREE.Mesh(rGeo, rMat);
                 rMesh.position.copy(pos);
                 rMesh.lookAt(0, 0, 0);
@@ -500,59 +520,48 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // --- 🌐 다국어 지원 (i18n) 설정 ---
-        let currentLang = 'ko';
+        // --- 🌐 4대 글로벌 리스크 모드 설정 ---
+        let currentMode = 'WAR';
 
-        const i18n = {
-            'ko': {
-                'title': 'EARTH SENTRY v2.8',
-                'mode': 'MODE: NIGHT_VISION_SENTRY',
-                'feed': 'FEED: LIVE_ENCRYPTED',
-                'intel': 'INTEL: OMEGA_CLASS',
-                'tactical_title': '[ TACTICAL STATUS ]',
-                'region_scan': 'REGION: GLOBAL_SCAN...',
-                'condition': 'WAR_CONDITION_CONFIRMED',
-                'live_feed': '[ LIVE INTEL FEED ]',
-                'btn_refresh': '[ FORCE REFRESH ]',
-                'btn_scan': '[ SCANNING... ]',
-                'standby': 'CONNECTING TO SECURE SATELLITE...<br><span class="news-time">STANDBY</span>',
-                'uplink': '<br>SATELLITE UPLINK INITIATED...<br><span class="news-time">MANUAL OVERRIDE ACCEPTED</span><br>',
-                'error': 'ERROR: SIGNAL INTERCEPTED.',
-                'secure_msg': 'SECURE MSG RCV // ',
-                'region_prefix': 'REGION: '
+        const modeData = {
+            'WAR': {
+                primary: '#40ff00', danger: '#ff0000',
+                title: 'EARTH SENTRY v2.8 - WARFARE', tactical: 'ARMED_CONFLICT_CONFIRMED', feed: 'DEFCON LEVEL UPDATE',
+                rssUrl: 'https://news.google.com/rss/search?q=(war+OR+conflict+OR+military)+when:1d&hl=en-US&gl=US&ceid=US:en'
             },
-            'en': {
-                'title': 'EARTH SENTRY v2.8',
-                'mode': 'MODE: NIGHT_VISION_SENTRY',
-                'feed': 'FEED: LIVE_ENCRYPTED',
-                'intel': 'INTEL: OMEGA_CLASS',
-                'tactical_title': '[ TACTICAL STATUS ]',
-                'region_scan': 'REGION: GLOBAL_SCAN...',
-                'condition': 'WAR_CONDITION_CONFIRMED',
-                'live_feed': '[ LIVE INTEL FEED ]',
-                'btn_refresh': '[ FORCE REFRESH ]',
-                'btn_scan': '[ SCANNING... ]',
-                'standby': 'CONNECTING TO SECURE SATELLITE...<br><span class="news-time">STANDBY</span>',
-                'uplink': '<br>SATELLITE UPLINK INITIATED...<br><span class="news-time">MANUAL OVERRIDE ACCEPTED</span><br>',
-                'error': 'ERROR: SIGNAL INTERCEPTED.',
-                'secure_msg': 'SECURE MSG RCV // ',
-                'region_prefix': 'REGION: '
+            'SEISMIC': {
+                primary: '#ffd700', danger: '#ffa500',
+                title: 'EARTH SENTRY v2.8 - SEISMIC', tactical: 'TECTONIC_SHIFT_DETECTED', feed: 'EARTHQUAKE MAGNITUDE',
+                rssUrl: 'https://news.google.com/rss/search?q=(earthquake+OR+tsunami+OR+volcano)+when:1d&hl=en-US&gl=US&ceid=US:en'
+            },
+            'ECONOMY': {
+                primary: '#ffffff', danger: '#00ffff',
+                title: 'EARTH SENTRY v2.8 - ECONOMY', tactical: 'MARKET_CRASH_WARNING', feed: 'FINANCIAL INDEX',
+                rssUrl: 'https://news.google.com/rss/search?q=("stock market"+OR+crash+OR+plunge)+when:1d&hl=en-US&gl=US&ceid=US:en'
+            },
+            'PANDEMIC': {
+                primary: '#00fa9a', danger: '#adff2f',
+                title: 'EARTH SENTRY v2.8 - PANDEMIC', tactical: 'INFECTION_SPREAD_DETECTED', feed: 'OUTBREAK ALERT',
+                rssUrl: 'https://news.google.com/rss/search?q=(outbreak+OR+virus+OR+pandemic+OR+epidemic)+when:1d&hl=en-US&gl=US&ceid=US:en'
             }
         };
 
-        function setLanguage(lang) {
-            currentLang = lang;
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (i18n[lang][key]) {
-                    el.innerHTML = i18n[lang][key];
-                }
-            });
-            fetchLiveIntel(true);
-        }
+        function setMode(mode) {
+            currentMode = mode;
+            const data = modeData[mode];
+            // 색상 테마 변환
+            document.documentElement.style.setProperty('--primary', data.primary);
+            document.documentElement.style.setProperty('--primary-glow', data.primary + '66'); // 40% opacity 
+            document.documentElement.style.setProperty('--danger', data.danger);
+            document.documentElement.style.setProperty('--danger-glow', data.danger + '80'); // 50% opacity
 
-        function toggleLanguage() {
-            setLanguage(currentLang === 'ko' ? 'en' : 'ko');
+            // 텍스트 변환
+            document.querySelector('.system-title').innerText = data.title;
+            document.querySelector('[data-i18n="condition"]').innerText = data.tactical;
+            document.querySelector('[data-i18n="feed"]').innerText = 'FEED: ' + data.feed;
+
+            // 새로운 모드로 즉각 데이터 새로고침
+            fetchLiveIntel(true);
         }
 
         // --- 📡 실시간 RSS 뉴스 피드 연동 (Google News) ---
@@ -562,21 +571,15 @@
 
             if (isManual && refreshBtn) {
                 // 수동 스캔 시 시각적 사이버 효과 추가
-                refreshBtn.innerText = i18n[currentLang]['btn_scan'];
-                refreshBtn.style.color = "#ff0000";
-                refreshBtn.style.borderColor = "#ff0000";
-                refreshBtn.style.boxShadow = "0 0 15px rgba(255, 0, 0, 0.5)";
-                newsContent.innerHTML = '<div class="news-item" style="color:#40ff00; text-align:center;">' + i18n[currentLang]['uplink'] + '</div>';
+                refreshBtn.innerText = "[ SCANNING... ]";
+                refreshBtn.style.color = "var(--danger)";
+                refreshBtn.style.borderColor = "var(--danger)";
+                refreshBtn.style.boxShadow = "0 0 15px var(--danger-glow)";
+                newsContent.innerHTML = `<div class="news-item" style="color:var(--primary); text-align:center;"><br>SATELLITE UPLINK INITIATED...<br><span class="news-time">MANUAL OVERRIDE ACCEPTED</span><br></div>`;
             }
 
-            // 구글 뉴스 RSS (언어 설정에 따라 북미/한국 접속 및 24시간 이내 주요국 언론 뉴스 필터링)
-            let rssUrl = '';
-            if (currentLang === 'en') {
-                rssUrl = 'https://news.google.com/rss/search?q=(war+OR+conflict+OR+military)+when:1d&hl=en-US&gl=US&ceid=US:en';
-            } else {
-                rssUrl = 'https://news.google.com/rss/search?q=(%EC%A0%84%EC%9F%81+OR+%EB%B6%84%EC%9F%81+OR+%EA%B5%B0%EC%82%AC)+site:yna.co.kr+OR+site:ytn.co.kr+OR+site:kbs.co.kr+OR+site:sbs.co.kr+OR+site:mbc.co.kr+when:1d&hl=ko&gl=KR&ceid=KR:ko';
-            }
-
+            // 모드별 RSS URL 가져오기
+            const rssUrl = modeData[currentMode].rssUrl;
             // CORS 우회용 무료 프록시(rss2json) 사용
             const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
@@ -591,10 +594,10 @@
                 .then(data => {
                     // 수동 스캔 종료 후 원래 상태 복구
                     if (refreshBtn) {
-                        refreshBtn.innerText = i18n[currentLang]['btn_refresh'];
-                        refreshBtn.style.color = "#40ff00";
-                        refreshBtn.style.borderColor = "#40ff00";
-                        refreshBtn.style.boxShadow = "0 0 8px rgba(64, 255, 0, 0.3)";
+                        refreshBtn.innerText = "[ FORCE REFRESH ]";
+                        refreshBtn.style.color = "";
+                        refreshBtn.style.borderColor = "";
+                        refreshBtn.style.boxShadow = "";
                     }
 
                     if (data.status === 'ok') {
@@ -608,7 +611,7 @@
                             html += `
                                 <div class="news-item">
                                     ${item.title}
-                                    <div class="news-time">${i18n[currentLang]['secure_msg']}${timeStr}</div>
+                                    <div class="news-time">SECURE MSG RCV // ${timeStr}</div>
                                 </div>
                             `;
                             // 문자열 스캔을 통한 지명(좌표) 찾기 (다국어 키워드 검색)
@@ -637,23 +640,23 @@
                             });
 
                             // 상황창 텍스트 업데이트 
-                            document.getElementById('tactical-region').innerText = i18n[currentLang]['region_prefix'] + regionNames.join(', ');
+                            document.getElementById('tactical-region').innerText = 'REGION: ' + regionNames.join(', ');
                         }
                     }
                 })
                 .catch(err => {
                     if (refreshBtn) {
-                        refreshBtn.innerText = i18n[currentLang]['btn_refresh'];
-                        refreshBtn.style.color = "#40ff00";
-                        refreshBtn.style.borderColor = "#40ff00";
+                        refreshBtn.innerText = "[ FORCE REFRESH ]";
+                        refreshBtn.style.color = "";
+                        refreshBtn.style.borderColor = "";
                     }
-                    newsContent.innerHTML = `<div class="news-item" style="color:#f00;">${i18n[currentLang]['error']}</div>`;
+                    newsContent.innerHTML = `<div class="news-item" style="color:var(--danger);">ERROR: SIGNAL INTERCEPTED.</div>`;
                 });
         }
 
-        // 초기 로딩 후 데이터 가져오기 및 5분마다 갱신
-        setTimeout(fetchLiveIntel, 1000);
-        setInterval(fetchLiveIntel, 300000);
+        // 초기 로딩 시 기본 모드로 실행하고 지속적으로 갱신
+        setTimeout(() => setMode('WAR'), 1000);
+        setInterval(() => fetchLiveIntel(false), 300000);
 
     </script>
 </body>
