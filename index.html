@@ -360,6 +360,7 @@
 
         // --- 🌏 고정밀 야경 지구본 (Night Lights) ---
         const sphereGeo = new THREE.SphereGeometry(1, 64, 64);
+        let globalNightMat, globalMaskMat;
 
         // 베이스 지형 (어두운 지형)
         const landMat = new THREE.MeshPhongMaterial({
@@ -370,15 +371,15 @@
         const earthMesh = new THREE.Mesh(sphereGeo, landMat);
         mainGroup.add(earthMesh);
 
-        // 야경 도시 불빛 오버레이 (Cloud 제거 완료!)
         textureLoader.load('https://threejs.org/examples/textures/planets/earth_lights_2048.png', (nightTexture) => {
             const nightMat = new THREE.MeshBasicMaterial({
                 map: nightTexture,
                 transparent: true,
                 opacity: 0.9,
                 blending: THREE.AdditiveBlending,
-                color: 0x40ff00 // 야경 불빛도 야광 그린 톤으로 통일!
+                color: 0x40ff00 // 초기값
             });
+            globalNightMat = nightMat;
             const nightLayer = new THREE.Mesh(new THREE.SphereGeometry(1.002, 64, 64), nightMat);
             mainGroup.add(nightLayer);
         });
@@ -392,6 +393,7 @@
                 color: 0x40ff00,
                 blending: THREE.AdditiveBlending
             });
+            globalMaskMat = maskMat;
             const maskLayer = new THREE.Mesh(new THREE.SphereGeometry(1.005, 64, 64), maskMat);
             mainGroup.add(maskLayer);
         });
@@ -471,7 +473,8 @@
         const light = new THREE.PointLight(0x40ff00, 1.5, 50);
         light.position.set(5, 5, 5);
         scene.add(light);
-        scene.add(new THREE.AmbientLight(0x40ff00, 0.3));
+        const ambientLight = new THREE.AmbientLight(0x40ff00, 0.3);
+        scene.add(ambientLight);
 
         // --- 🖱️ 벨벳 부드러운 카메라 컨트롤 ---
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -553,6 +556,15 @@
             document.documentElement.style.setProperty('--primary-glow', data.primary + '66'); // 40% opacity 
             document.documentElement.style.setProperty('--danger', data.danger);
             document.documentElement.style.setProperty('--danger-glow', data.danger + '80'); // 50% opacity
+
+            if (typeof light !== 'undefined' && typeof ambientLight !== 'undefined') {
+                const primaryHex = parseInt(data.primary.replace('#', '0x'));
+                light.color.setHex(primaryHex);
+                ambientLight.color.setHex(primaryHex);
+                if (typeof gridMat !== 'undefined') gridMat.color.setHex(primaryHex);
+                if (typeof globalNightMat !== 'undefined') globalNightMat.color.setHex(primaryHex);
+                if (typeof globalMaskMat !== 'undefined') globalMaskMat.color.setHex(primaryHex);
+            }
 
             // 텍스트 변환
             document.querySelector('.system-title').innerText = data.title;
