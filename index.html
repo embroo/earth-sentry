@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EARTH SENTRY v2.7 - NIGHT WATCH COMMAND</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
+
         :root {
             --primary: #40ff00;
             --primary-glow: rgba(64, 255, 0, 0.4);
@@ -14,8 +16,6 @@
             --danger-glow: rgba(255, 0, 0, 0.5);
             --bg-color: rgba(0, 20, 0, 0.4);
         }
-
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
 
         body {
             margin: 0;
@@ -465,8 +465,7 @@
             '이라크/Iraq': { coords: [33.2232, 43.6793], keywords: ['이라크', 'Iraq'] }
         };
 
-        // 기본 마커 작동 보장 (파키스탄) - 데이터가 없을 시 기본 표시
-        createCrisisMarker(33.722, 70.412);
+        // (초기 실행 오류 방지를 위해 하드코딩된 콜 제거)
 
         // 조명
         const light = new THREE.PointLight(0x40ff00, 1.5, 50);
@@ -635,7 +634,7 @@
                             foundLocations.forEach(loc => {
                                 createCrisisMarker(locationDB[loc].coords[0], locationDB[loc].coords[1]);
                                 // 선택된 언어에 맞춰서 지명 출력
-                                let displayName = currentLang === 'en' ? loc.split('/')[1] : loc.split('/')[0];
+                                let displayName = loc.split('/')[1];
                                 regionNames.push(displayName);
                             });
 
