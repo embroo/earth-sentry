@@ -3,25 +3,21 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- PWA 선언부 -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#40ff00">
+    <link rel="apple-touch-icon" href="./icon-192.png">
+
     <title>EARTH SENTRY v2.7 - NIGHT WATCH COMMAND</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
-
-        :root {
-            --primary: #40ff00;
-            --primary-glow: rgba(64, 255, 0, 0.4);
-            --primary-glow-strong: rgba(64, 255, 0, 0.9);
-            --danger: #ff0000;
-            --danger-glow: rgba(255, 0, 0, 0.5);
-            --bg-color: rgba(0, 20, 0, 0.4);
-        }
 
         body {
             margin: 0;
             overflow: hidden;
             background-color: #000;
-            color: var(--primary);
+            color: #40ff00;
             font-family: 'Share Tech Mono', monospace;
         }
 
@@ -71,15 +67,15 @@
             font-size: 34px;
             font-weight: 700;
             letter-spacing: 6px;
-            color: var(--primary);
-            text-shadow: 0 0 15px var(--primary);
+            color: #40ff00;
+            text-shadow: 0 0 15px #40ff00;
         }
 
         .status-info {
             text-align: right;
             font-size: 13px;
             letter-spacing: 1px;
-            color: var(--primary);
+            color: #40ff00;
             line-height: 1.6;
         }
 
@@ -87,62 +83,62 @@
             position: absolute;
             top: 18%;
             right: 40px;
-            background: var(--bg-color);
-            border: 1px solid var(--primary);
+            background: rgba(0, 20, 0, 0.4);
+            border: 1px solid #40ff00;
             padding: 20px;
-            color: var(--danger);
+            color: #ff0000;
             width: 280px;
-            text-shadow: 0 0 5px var(--danger);
-            box-shadow: 0 0 20px var(--danger-glow);
+            text-shadow: 0 0 5px #f00;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
         }
 
         .news-box {
             position: absolute;
             top: calc(18% + 130px);
             right: 40px;
-            background: var(--bg-color);
-            border: 1px solid var(--primary);
+            background: rgba(0, 20, 0, 0.4);
+            border: 1px solid #40ff00;
             padding: 15px;
-            color: var(--primary);
+            color: #40ff00;
             width: 280px;
-            box-shadow: 0 0 20px var(--primary-glow);
+            box-shadow: 0 0 20px rgba(64, 255, 0, 0.1);
         }
 
         .news-title {
             font-weight: bold;
             color: #f00;
             margin-bottom: 10px;
-            text-shadow: 0 0 5px var(--danger);
+            text-shadow: 0 0 5px #f00;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .refresh-btn {
             background: rgba(0, 0, 0, 0.8);
-            border: 1px solid var(--primary);
-            color: var(--primary);
+            border: 1px solid #40ff00;
+            color: #40ff00;
             font-family: 'Share Tech Mono', monospace;
             font-size: 12px;
             font-weight: bold;
             padding: 6px 10px;
             cursor: pointer;
-            box-shadow: 0 0 10px var(--primary-glow);
+            box-shadow: 0 0 10px rgba(64, 255, 0, 0.4);
             transition: all 0.2s;
             pointer-events: auto;
             /* 중요: 클릭 가능하도록 설정 */
         }
 
-        @media (hover: hover) and (pointer: fine) {
-            .refresh-btn:hover {
-                background: var(--primary);
-                color: #000;
-                text-shadow: none;
-            }
+        .refresh-btn:hover {
+            background: #40ff00;
+            color: #000;
+            text-shadow: none;
         }
 
         .refresh-btn:active {
-            box-shadow: 0 0 20px var(--primary-glow-strong);
+            box-shadow: 0 0 20px rgba(64, 255, 0, 0.9);
         }
 
         .news-item {
@@ -168,11 +164,11 @@
 
         .bottom-left-coords {
             position: absolute;
-            bottom: 150px;
+            bottom: 40px;
             left: 40px;
             font-size: 18px;
             line-height: 1.5;
-            color: var(--primary);
+            color: #40ff00;
             text-shadow: 0 0 8px #40ff00;
         }
 
@@ -184,8 +180,8 @@
         .peace-message-box {
             background: rgba(0, 0, 0, 0.9);
             padding: 15px 50px;
-            border: 1px solid var(--primary);
-            color: var(--primary);
+            border: 1px solid #40ff00;
+            color: #40ff00;
             display: inline-block;
             box-shadow: 0 0 30px rgba(64, 255, 0, 0.4);
             font-size: 18px;
@@ -208,7 +204,7 @@
         .crosshair::after {
             content: "";
             position: absolute;
-            background: var(--primary);
+            background: #40ff00;
             opacity: 0.5;
         }
 
@@ -242,27 +238,23 @@
             }
 
             .alert-box {
-                top: 130px;
+                top: 70px;
                 right: 15px;
-                width: 240px;
+                width: 200px;
                 padding: 12px;
             }
 
-            .alert-box div:last-child {
-                font-size: 13px !important;
-            }
-
             .news-box {
-                top: 240px;
+                top: 170px;
                 right: 15px;
-                width: 240px;
+                width: 200px;
                 padding: 12px;
             }
 
             .news-title {
                 font-size: 11px;
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: flex-end;
                 gap: 5px;
             }
 
@@ -274,13 +266,96 @@
             }
 
             .bottom-left-coords {
-                bottom: 30px;
+                bottom: 20px;
                 left: 15px;
                 font-size: 14px;
             }
 
             .crosshair {
                 transform: translate(-50%, -50%) scale(0.6);
+            }
+        }
+
+        /* End of @media (max-width: 768px) */
+
+        /* --- 📺 Youtube Panel --- */
+        .youtube-panel {
+            position: absolute;
+            top: 18%;
+            left: 40px;
+            background: rgba(0, 20, 0, 0.4);
+            border: 1px solid #40ff00;
+            padding: 15px;
+            color: #40ff00;
+            width: 320px;
+            box-shadow: 0 0 20px rgba(64, 255, 0, 0.1);
+            pointer-events: auto;
+            max-height: 60vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .youtube-panel::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .youtube-panel::-webkit-scrollbar-thumb {
+            background: #40ff00;
+        }
+
+        .yt-title {
+            font-weight: bold;
+            color: #f00;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px #f00;
+            font-size: 14px;
+            border-bottom: 1px solid #40ff00;
+            padding-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .yt-card {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+            border-bottom: 1px dotted rgba(64, 255, 0, 0.3);
+            padding-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .yt-card:hover {
+            background: rgba(64, 255, 0, 0.1);
+            border-color: #40ff00;
+        }
+
+        .yt-thumbnail img {
+            width: 100%;
+            border: 1px solid #40ff00;
+        }
+
+        .yt-info {
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .yt-author {
+            font-size: 10px;
+            color: #88ff88;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .youtube-panel {
+                top: auto;
+                bottom: 80px;
+                left: 15px;
+                width: calc(100% - 30px);
+                max-height: 30vh;
             }
         }
     </style>
@@ -290,43 +365,38 @@
     <div class="crosshair"></div>
     <div id="overlay">
         <div class="top-ui">
-            <div class="system-title" data-i18n="title">EARTH SENTRY v2.8</div>
-            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
-                <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end;">
-                    <button class="refresh-btn" onclick="setMode('WAR')"
-                        style="text-shadow:0 0 5px #ff0000; border-color:#ff0000;">[ WAR ]</button>
-                    <button class="refresh-btn" onclick="setMode('SEISMIC')"
-                        style="text-shadow:0 0 5px #ffa500; border-color:#ffa500;">[ SEISMIC ]</button>
-                    <button class="refresh-btn" onclick="setMode('ECONOMY')"
-                        style="text-shadow:0 0 5px #00ffff; border-color:#00ffff;">[ ECONOMY ]</button>
-                    <button class="refresh-btn" onclick="setMode('PANDEMIC')"
-                        style="text-shadow:0 0 5px #adff2f; border-color:#adff2f;">[ PANDEMIC ]</button>
-                </div>
-                <div class="status-info">
-                    <span data-i18n="mode">MODE: NIGHT_VISION_SENTRY</span><br>
-                    <span data-i18n="feed">FEED: LIVE_ENCRYPTED</span><br>
-                    <span data-i18n="intel">INTEL: OMEGA_CLASS</span>
-                </div>
+            <div class="system-title">EARTH SENTRY v2.7</div>
+            <div class="status-info">
+                MODE: NIGHT_VISION_SENTRY<br>
+                FEED: LIVE_ENCRYPTED<br>
+                INTEL: OMEGA_CLASS
             </div>
         </div>
 
         <div class="alert-box">
-            <div style="font-weight: bold; color: var(--danger);" data-i18n="tactical_title">[ TACTICAL STATUS ]</div>
-            <div id="tactical-region" style="color: var(--primary); margin-top: 5px;" data-i18n="region_scan">REGION:
-                GLOBAL_SCAN...</div>
-            <div style="margin-top: 8px; font-size: 18px; font-weight: bold;" data-i18n="condition">
+            <div style="font-weight: bold; color: #f00;">>> TACTICAL STATUS</div>
+            <div id="tactical-region" style="color: #40ff00; margin-top: 5px;">REGION: GLOBAL_SCAN...</div>
+            <div style="margin-top: 8px; font-size: 14px; font-weight: bold; word-break: break-all;">
                 WAR_CONDITION_CONFIRMED</div>
         </div>
 
         <div class="news-box">
             <div class="news-title">
-                <span data-i18n="live_feed">[ LIVE INTEL FEED ]</span>
-                <button id="refresh-btn" class="refresh-btn" onclick="fetchLiveIntel(true)" data-i18n="btn_refresh">[
-                    FORCE REFRESH ]</button>
+                <span>>> LIVE INTEL FEED</span>
+                <button id="refresh-btn" class="refresh-btn" onclick="fetchLiveIntel(true)">REFRESH</button>
             </div>
             <div id="news-content">
-                <div class="news-item" data-i18n="standby">CONNECTING TO SECURE SATELLITE...<br><span
-                        class="news-time">STANDBY</span></div>
+                <div class="news-item">CONNECTING TO SECURE SATELLITE...<br><span class="news-time">STANDBY</span></div>
+            </div>
+        </div>
+
+        <div class="youtube-panel" id="youtube-panel">
+            <div class="yt-title">
+                <span style="color:red;">▶</span> >> SENSOR_STUDIO_UPLINK
+            </div>
+            <div id="yt-content">
+                <div class="news-item" style="color:#40ff00;">ESTABLISHING CONNECTION...<br><span class="news-time">RSS
+                        SYNCING</span></div>
             </div>
         </div>
 
@@ -360,7 +430,6 @@
 
         // --- 🌏 고정밀 야경 지구본 (Night Lights) ---
         const sphereGeo = new THREE.SphereGeometry(1, 64, 64);
-        let globalNightMat, globalMaskMat;
 
         // 베이스 지형 (어두운 지형)
         const landMat = new THREE.MeshPhongMaterial({
@@ -371,15 +440,15 @@
         const earthMesh = new THREE.Mesh(sphereGeo, landMat);
         mainGroup.add(earthMesh);
 
+        // 야경 도시 불빛 오버레이 (Cloud 제거 완료!)
         textureLoader.load('https://threejs.org/examples/textures/planets/earth_lights_2048.png', (nightTexture) => {
             const nightMat = new THREE.MeshBasicMaterial({
                 map: nightTexture,
                 transparent: true,
                 opacity: 0.9,
                 blending: THREE.AdditiveBlending,
-                color: 0x40ff00 // 초기값
+                color: 0x40ff00 // 야경 불빛도 야광 그린 톤으로 통일!
             });
-            globalNightMat = nightMat;
             const nightLayer = new THREE.Mesh(new THREE.SphereGeometry(1.002, 64, 64), nightMat);
             mainGroup.add(nightLayer);
         });
@@ -393,7 +462,6 @@
                 color: 0x40ff00,
                 blending: THREE.AdditiveBlending
             });
-            globalMaskMat = maskMat;
             const maskLayer = new THREE.Mesh(new THREE.SphereGeometry(1.005, 64, 64), maskMat);
             mainGroup.add(maskLayer);
         });
@@ -427,16 +495,14 @@
                 1.02 * Math.cos(phi),
                 1.02 * Math.sin(phi) * Math.sin(theta)
             );
-            const dangerColor = modeData[currentMode].danger;
-            const marker = new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 16), new THREE.MeshBasicMaterial({ color: dangerColor }));
+            const marker = new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 16), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
             marker.position.copy(pos);
             markersGroup.add(marker);
 
             const rings = [];
             for (let i = 0; i < 3; i++) {
-                const dangerColor = modeData[currentMode].danger;
                 const rGeo = new THREE.TorusGeometry(0.06, 0.006, 8, 64);
-                const rMat = new THREE.MeshBasicMaterial({ color: dangerColor, transparent: true, opacity: 0.8 });
+                const rMat = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.8 });
                 const rMesh = new THREE.Mesh(rGeo, rMat);
                 rMesh.position.copy(pos);
                 rMesh.lookAt(0, 0, 0);
@@ -446,35 +512,27 @@
             activeMarkers.push({ marker, rings });
         }
 
-        // 지명 -> 좌표 맵핑 사전 (다국어 지원)
+        // 지명 -> 좌표 맵핑 사전
         const locationDB = {
-            '이란/Iran': { coords: [32.4279, 53.6880], keywords: ['이란', 'Iran'] },
-            '우크라이나/Ukraine': { coords: [48.3794, 31.1656], keywords: ['우크라이나', 'Ukraine'] },
-            '러시아/Russia': { coords: [61.5240, 105.3188], keywords: ['러시아', 'Russia'] },
-            '이스라엘/Israel': { coords: [31.0461, 34.8516], keywords: ['이스라엘', 'Israel'] },
-            '팔레스타인/Palestine': { coords: [31.9522, 35.2332], keywords: ['팔레스타인', 'Palestine'] },
-            '가자/Gaza': { coords: [31.5, 34.4667], keywords: ['가자', 'Gaza'] },
-            '파키스탄/Pakistan': { coords: [30.3753, 69.3451], keywords: ['파키스탄', 'Pakistan'] },
-            '아프간/Afghanistan': { coords: [33.9391, 67.7100], keywords: ['아프간', '아프가니스탄', 'Afghanistan'] },
-            '미국/USA': { coords: [37.0902, -95.7129], keywords: ['미국', '미 정부', 'USA', 'US'] },
-            '중국/China': { coords: [35.8617, 104.1954], keywords: ['중국', 'China'] },
-            '대만/Taiwan': { coords: [23.6978, 120.9605], keywords: ['대만', 'Taiwan'] },
-            '레바논/Lebanon': { coords: [33.8547, 35.8623], keywords: ['레바논', 'Lebanon'] },
-            '시리아/Syria': { coords: [34.8021, 38.9968], keywords: ['시리아', 'Syria'] },
-            '예멘/Yemen': { coords: [15.5527, 48.5164], keywords: ['예멘', 'Yemen'] },
-            '북한/North Korea': { coords: [40.3399, 127.5101], keywords: ['북한', 'North Korea'] },
-            '수단/Sudan': { coords: [12.8628, 30.2176], keywords: ['수단', 'Sudan'] },
-            '이라크/Iraq': { coords: [33.2232, 43.6793], keywords: ['이라크', 'Iraq'] }
+            '이란': [32.4279, 53.6880], '우크라이나': [48.3794, 31.1656],
+            '러시아': [61.5240, 105.3188], '이스라엘': [31.0461, 34.8516],
+            '팔레스타인': [31.9522, 35.2332], '가자': [31.5, 34.4667],
+            '파키스탄': [30.3753, 69.3451], '아프간': [33.9391, 67.7100],
+            '미국': [37.0902, -95.7129], '중국': [35.8617, 104.1954],
+            '대만': [23.6978, 120.9605], '레바논': [33.8547, 35.8623],
+            '시리아': [34.8021, 38.9968], '예멘': [15.5527, 48.5164],
+            '북한': [40.3399, 127.5101], '수단': [12.8628, 30.2176],
+            '이라크': [33.2232, 43.6793]
         };
 
-        // (초기 실행 오류 방지를 위해 하드코딩된 콜 제거)
+        // 기본 마커 작동 보장 (파키스탄) - 데이터가 없을 시 기본 표시
+        createCrisisMarker(33.722, 70.412);
 
         // 조명
         const light = new THREE.PointLight(0x40ff00, 1.5, 50);
         light.position.set(5, 5, 5);
         scene.add(light);
-        const ambientLight = new THREE.AmbientLight(0x40ff00, 0.3);
-        scene.add(ambientLight);
+        scene.add(new THREE.AmbientLight(0x40ff00, 0.3));
 
         // --- 🖱️ 벨벳 부드러운 카메라 컨트롤 ---
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -522,58 +580,6 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // --- 🌐 4대 글로벌 리스크 모드 설정 ---
-        let currentMode = 'WAR';
-
-        const modeData = {
-            'WAR': {
-                primary: '#40ff00', danger: '#ff0000',
-                title: 'EARTH SENTRY v2.8 - WARFARE', tactical: 'ARMED_CONFLICT_CONFIRMED', feed: 'DEFCON LEVEL UPDATE',
-                rssUrl: 'https://news.google.com/rss/search?q=(war+OR+conflict+OR+military)+when:1d&hl=en-US&gl=US&ceid=US:en'
-            },
-            'SEISMIC': {
-                primary: '#ffd700', danger: '#ffa500',
-                title: 'EARTH SENTRY v2.8 - SEISMIC', tactical: 'TECTONIC_SHIFT_DETECTED', feed: 'EARTHQUAKE MAGNITUDE',
-                rssUrl: 'https://news.google.com/rss/search?q=(earthquake+OR+tsunami+OR+volcano)+when:1d&hl=en-US&gl=US&ceid=US:en'
-            },
-            'ECONOMY': {
-                primary: '#00d4ff', danger: '#00d4ff',
-                title: 'EARTH SENTRY v2.8 - ECONOMY', tactical: 'MARKET_CRASH_WARNING', feed: 'FINANCIAL INDEX',
-                rssUrl: 'https://news.google.com/rss/search?q=("stock market"+OR+crash+OR+plunge+OR+economy)+when:1d&hl=en-US&gl=US&ceid=US:en'
-            },
-            'PANDEMIC': {
-                primary: '#bf00ff', danger: '#bf00ff',
-                title: 'EARTH SENTRY v2.8 - PANDEMIC', tactical: 'INFECTION_SPREAD_DETECTED', feed: 'OUTBREAK ALERT',
-                rssUrl: 'https://news.google.com/rss/search?q=(outbreak+OR+virus+OR+pandemic+OR+epidemic)+when:1d&hl=en-US&gl=US&ceid=US:en'
-            }
-        };
-
-        function setMode(mode) {
-            currentMode = mode;
-            const data = modeData[mode];
-            // 색상 테마 변환
-            document.documentElement.style.setProperty('--primary', data.primary);
-            document.documentElement.style.setProperty('--primary-glow', data.primary + '66'); // 40% opacity 
-            document.documentElement.style.setProperty('--danger', data.danger);
-            document.documentElement.style.setProperty('--danger-glow', data.danger + '80'); // 50% opacity
-
-            if (typeof light !== 'undefined' && typeof ambientLight !== 'undefined') {
-                light.color.set(data.primary);
-                ambientLight.color.set(data.primary);
-                if (typeof gridMat !== 'undefined') gridMat.color.set(data.primary);
-                if (typeof globalNightMat !== 'undefined') globalNightMat.color.set(data.primary);
-                if (typeof globalMaskMat !== 'undefined') globalMaskMat.color.set(data.primary);
-            }
-
-            // 텍스트 변환
-            document.querySelector('.system-title').innerText = data.title;
-            document.querySelector('[data-i18n="condition"]').innerText = data.tactical;
-            document.querySelector('[data-i18n="feed"]').innerText = 'FEED: ' + data.feed;
-
-            // 새로운 모드로 즉각 데이터 새로고침
-            fetchLiveIntel(true);
-        }
-
         // --- 📡 실시간 RSS 뉴스 피드 연동 (Google News) ---
         function fetchLiveIntel(isManual = false) {
             const newsContent = document.getElementById('news-content');
@@ -581,33 +587,27 @@
 
             if (isManual && refreshBtn) {
                 // 수동 스캔 시 시각적 사이버 효과 추가
-                refreshBtn.innerText = "[ SCANNING... ]";
-                refreshBtn.style.color = "var(--danger)";
-                refreshBtn.style.borderColor = "var(--danger)";
-                refreshBtn.style.boxShadow = "0 0 15px var(--danger-glow)";
-                newsContent.innerHTML = `<div class="news-item" style="color:var(--primary); text-align:center;"><br>SATELLITE UPLINK INITIATED...<br><span class="news-time">MANUAL OVERRIDE ACCEPTED</span><br></div>`;
+                refreshBtn.innerText = "SCANNING...";
+                refreshBtn.style.color = "#ff0000";
+                refreshBtn.style.borderColor = "#ff0000";
+                refreshBtn.style.boxShadow = "0 0 15px rgba(255, 0, 0, 0.5)";
+                newsContent.innerHTML = '<div class="news-item" style="color:#40ff00; text-align:center;"><br>SATELLITE UPLINK INITIATED...<br><span class="news-time">MANUAL OVERRIDE ACCEPTED</span><br></div>';
             }
 
-            // 모드별 RSS URL 가져오기
-            const rssUrl = modeData[currentMode].rssUrl;
+            // 구글 뉴스 RSS (검색어: 전쟁 OR 분쟁)
+            const rssUrl = 'https://news.google.com/rss/search?q=%EC%A0%84%EC%9F%81+OR+%EB%B6%84%EC%9F%81&hl=ko&gl=KR&ceid=KR:ko';
             // CORS 우회용 무료 프록시(rss2json) 사용
             const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
-            // 강제 딜레이 연출 (위성 연결 시각 효과용, 수동 스캔 시에만 1.5초 지연)
-            const delayTime = isManual ? 1500 : 0;
-
-            Promise.all([
-                fetch(apiUrl),
-                new Promise(resolve => setTimeout(resolve, delayTime))
-            ])
-                .then(([response]) => response.json())
+            fetch(apiUrl)
+                .then(response => response.json())
                 .then(data => {
                     // 수동 스캔 종료 후 원래 상태 복구
                     if (refreshBtn) {
-                        refreshBtn.innerText = "[ FORCE REFRESH ]";
-                        refreshBtn.style.color = "";
-                        refreshBtn.style.borderColor = "";
-                        refreshBtn.style.boxShadow = "";
+                        refreshBtn.innerText = "REFRESH";
+                        refreshBtn.style.color = "#40ff00";
+                        refreshBtn.style.borderColor = "#40ff00";
+                        refreshBtn.style.boxShadow = "0 0 8px rgba(64, 255, 0, 0.3)";
                     }
 
                     if (data.status === 'ok') {
@@ -624,10 +624,9 @@
                                     <div class="news-time">SECURE MSG RCV // ${timeStr}</div>
                                 </div>
                             `;
-                            // 문자열 스캔을 통한 지명(좌표) 찾기 (다국어 키워드 검색)
-                            for (const [key, locData] of Object.entries(locationDB)) {
-                                const found = locData.keywords.some(kw => item.title.toLowerCase().includes(kw.toLowerCase()));
-                                if (found) foundLocations.add(key);
+                            // 문자열 스캔을 통한 지명(좌표) 찾기
+                            for (const loc in locationDB) {
+                                if (item.title.includes(loc)) foundLocations.add(loc);
                             }
                         });
                         newsContent.innerHTML = html;
@@ -643,30 +642,112 @@
                             // 새 뉴스 지역에 다중 마커 투하
                             let regionNames = [];
                             foundLocations.forEach(loc => {
-                                createCrisisMarker(locationDB[loc].coords[0], locationDB[loc].coords[1]);
-                                // 선택된 언어에 맞춰서 지명 출력
-                                let displayName = loc.split('/')[1];
-                                regionNames.push(displayName);
+                                createCrisisMarker(locationDB[loc][0], locationDB[loc][1]);
+                                regionNames.push(loc);
                             });
 
                             // 상황창 텍스트 업데이트 
-                            document.getElementById('tactical-region').innerText = 'REGION: ' + regionNames.join(', ');
+                            document.getElementById('tactical-region').innerText = `REGION: ${regionNames.join(', ')}`;
                         }
                     }
                 })
                 .catch(err => {
                     if (refreshBtn) {
-                        refreshBtn.innerText = "[ FORCE REFRESH ]";
-                        refreshBtn.style.color = "";
-                        refreshBtn.style.borderColor = "";
+                        refreshBtn.innerText = "REFRESH";
+                        refreshBtn.style.color = "#40ff00";
+                        refreshBtn.style.borderColor = "#40ff00";
                     }
-                    newsContent.innerHTML = `<div class="news-item" style="color:var(--danger);">ERROR: SIGNAL INTERCEPTED.</div>`;
+                    newsContent.innerHTML = '<div class="news-item" style="color:#f00;">ERROR: SIGNAL INTERCEPTED.</div>';
                 });
         }
 
-        // 초기 로딩 시 기본 모드로 실행하고 지속적으로 갱신
-        setTimeout(() => setMode('WAR'), 1000);
-        setInterval(() => fetchLiveIntel(false), 300000);
+        // 초기 로딩 후 데이터 가져오기 및 5분마다 갱신
+        setTimeout(fetchLiveIntel, 1000);
+        setInterval(fetchLiveIntel, 300000);
+
+        // --- 📡 YouTube 실시간 동기화 (RSS 직접 파싱) ---
+        const ytContent = document.getElementById('yt-content');
+        let lastYouTubeVid = '';
+
+        async function fetchYouTubeFeed() {
+            try {
+                // 센서스튜디오 고정 채널 ID (UC6dN6Rilzh9KmzymxnZGslg)
+                const rssUrl = encodeURIComponent("https://www.youtube.com/feeds/videos.xml?channel_id=UC6dN6Rilzh9KmzymxnZGslg");
+                const proxyUrl = "https://api.codetabs.com/v1/proxy?quest=" + rssUrl;
+
+                const response = await fetch(proxyUrl);
+                const str = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(str, "text/xml");
+
+                const entry = xmlDoc.querySelector("entry");
+                if (entry) {
+                    const videoId = entry.querySelector("id").textContent;
+
+                    // 새 영상이 아니라면 스킵
+                    if (lastYouTubeVid === videoId) return;
+                    lastYouTubeVid = videoId;
+
+                    const title = entry.querySelector("title").textContent;
+                    const link = entry.querySelector("link").getAttribute("href");
+                    const author = entry.querySelector("author name").textContent;
+
+                    // media:group에서 썸네일과 설명 추출
+                    const mediaGroup = entry.getElementsByTagNameNS("*", "group")[0];
+                    const thumbnail = mediaGroup.getElementsByTagNameNS("*", "thumbnail")[0].getAttribute("url");
+                    const fullDesc = mediaGroup.getElementsByTagNameNS("*", "description")[0].textContent;
+                    const shortDesc = fullDesc.substring(0, 80) + "...";
+
+                    const pubDate = new Date(entry.querySelector("published").textContent);
+                    const timeStr = `${pubDate.getHours().toString().padStart(2, '0')}:${pubDate.getMinutes().toString().padStart(2, '0')}`;
+
+                    console.log("Receiving Youtube Alert (RSS):", title);
+
+                    const html = `
+                        <div class="yt-card" onclick="window.open('${link}', '_blank')" style="border: 1px solid #40ff00; padding:10px; border-radius:4px; background:rgba(0,40,0,0.6); display:flex; gap:12px; align-items:center; cursor:pointer;">
+                            <div class="yt-thumbnail" style="flex: 0 0 100px; position:relative;">
+                                <img src="${thumbnail}" alt="thumbnail" style="width:100%; display:block; border-radius:4px;">
+                                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(255,0,0,0.8); color:#fff; padding:4px 8px; border-radius:12px; font-weight:bold; font-size:10px; pointer-events:none;">▶ PLAY</div>
+                            </div>
+                            <div class="yt-info" style="flex: 1; min-width: 0; line-height: 1.3;">
+                                <div style="color:#f00; font-weight:bold; font-size:10px; margin-bottom:4px;">NEW INTEL DETECTED</div>
+                                <div style="color:#fff; font-size:13px; font-weight:bold; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;">${title}</div>
+                                <div style="margin-top:4px; color:#aaa; font-size:10px;">${timeStr}</div>
+                            </div>
+                        </div>
+                    `;
+                    ytContent.innerHTML = html;
+
+                    // 시각적 피드백
+                    const panel = document.getElementById('youtube-panel');
+                    panel.style.boxShadow = "0 0 30px rgba(255, 0, 0, 0.8)";
+                    panel.style.borderColor = "#f00";
+                    setTimeout(() => {
+                        panel.style.boxShadow = "0 0 20px rgba(64, 255, 0, 0.1)";
+                        panel.style.borderColor = "#40ff00";
+                    }, 2000);
+                }
+            } catch (e) {
+                console.error("YouTube RSS Fetch failed", e);
+            }
+        }
+
+        // 1분마다 RSS 체크
+        setInterval(fetchYouTubeFeed, 60000);
+        setTimeout(fetchYouTubeFeed, 1000);
+
+        // --- 📡 Service Worker 등록 (PWA 앱화 지원) ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('EARTH SENTRY Service Worker Registered!', registration.scope);
+                    })
+                    .catch(err => {
+                        console.error('Service Worker Registration Failed!', err);
+                    });
+            });
+        }
 
     </script>
 </body>
