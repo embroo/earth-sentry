@@ -358,6 +358,87 @@
                 max-height: 30vh;
             }
         }
+
+        /* --- 🕹️ Mode Selector --- */
+        .mode-selector {
+            position: absolute;
+            top: 100px;
+            left: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: auto;
+            z-index: 1100;
+        }
+
+        .mode-btn {
+            background: rgba(0, 20, 0, 0.7);
+            border: 1px solid #40ff00;
+            color: #40ff00;
+            padding: 8px 15px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            width: 140px;
+            box-shadow: 0 0 10px rgba(64, 255, 0, 0.2);
+        }
+
+        .mode-btn:hover {
+            background: rgba(64, 255, 0, 0.2);
+            box-shadow: 0 0 15px rgba(64, 255, 0, 0.5);
+        }
+
+        .mode-btn.active {
+            background: #40ff00;
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 20px #40ff00;
+        }
+
+        /* Mode specific colors */
+        .mode-btn[data-mode="ECONOMY"].active {
+            background: #00ccff;
+            border-color: #00ccff;
+            box-shadow: 0 0 20px #00ccff;
+        }
+
+        .mode-btn[data-mode="WAR"].active {
+            background: #ff3300;
+            border-color: #ff3300;
+            box-shadow: 0 0 20px #ff3300;
+        }
+
+        .mode-btn[data-mode="SEISMIC"].active {
+            background: #ffaa00;
+            border-color: #ffaa00;
+            box-shadow: 0 0 20px #ffaa00;
+        }
+
+        .mode-btn[data-mode="PANDEMIC"].active {
+            background: #cc00ff;
+            border-color: #cc00ff;
+            box-shadow: 0 0 20px #cc00ff;
+        }
+
+        @media (max-width: 768px) {
+            .mode-selector {
+                top: 70px;
+                left: 15px;
+                flex-direction: row;
+                width: calc(100% - 30px);
+                overflow-x: auto;
+                padding-bottom: 5px;
+            }
+
+            .mode-btn {
+                flex: 0 0 auto;
+                width: auto;
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 
@@ -367,10 +448,17 @@
         <div class="top-ui">
             <div class="system-title">EARTH SENTRY v2.7</div>
             <div class="status-info">
-                MODE: NIGHT_VISION_SENTRY<br>
+                MODE: <span id="current-mode-display">WAR_DETECTION</span><br>
                 FEED: LIVE_ENCRYPTED<br>
                 INTEL: OMEGA_CLASS
             </div>
+        </div>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="WAR" onclick="setAppMode('WAR')">>> WAR</button>
+            <button class="mode-btn" data-mode="ECONOMY" onclick="setAppMode('ECONOMY')">>> ECONOMY</button>
+            <button class="mode-btn" data-mode="SEISMIC" onclick="setAppMode('SEISMIC')">>> SEISMIC</button>
+            <button class="mode-btn" data-mode="PANDEMIC" onclick="setAppMode('PANDEMIC')">>> PANDEMIC</button>
         </div>
 
         <div class="alert-box">
@@ -392,7 +480,8 @@
 
         <div class="youtube-panel" id="youtube-panel">
             <div class="yt-title">
-                <span style="color:red;">▶</span> >> SENSOR_STUDIO_UPLINK
+                <span id="yt-channel-icon" style="color:red;">▶</span> <span id="yt-title-text">>>
+                    SENSOR_STUDIO_UPLINK</span>
             </div>
             <div id="yt-content">
                 <div class="news-item" style="color:#40ff00;">ESTABLISHING CONNECTION...<br><span class="news-time">RSS
@@ -594,8 +683,15 @@
                 newsContent.innerHTML = '<div class="news-item" style="color:#40ff00; text-align:center;"><br>SATELLITE UPLINK INITIATED...<br><span class="news-time">MANUAL OVERRIDE ACCEPTED</span><br></div>';
             }
 
-            // 구글 뉴스 RSS (검색어: 전쟁 OR 분쟁)
-            const rssUrl = 'https://news.google.com/rss/search?q=%EC%A0%84%EC%9F%81+OR+%EB%B6%84%EC%9F%81&hl=ko&gl=KR&ceid=KR:ko';
+            // 현재 모드에 따른 구글 뉴스 RSS (검색어 변경)
+            const queries = {
+                'WAR': '%EC%A0%84%EC%9F%81+OR+%EB%B6%84%EC%9F%81',
+                'ECONOMY': '%EA%B2%BD%EC%A0%9C+OR+%EA%B2%BD%EA%B8%B0+OR+%EA%B8%88%EB%A6%AC',
+                'SEISMIC': '%EC%A7%80%EC%A7%84+OR+%ED%99%94%EC%82%B0',
+                'PANDEMIC': '%EC%A0%84%EC%97%BC%EB%B3%91+OR+%EB%B0%94%EC%9D%B4%EB%9F%AC%EC%8A%A4'
+            };
+
+            const rssUrl = `https://news.google.com/rss/search?q=${queries[currentAppMode]}&hl=ko&gl=KR&ceid=KR:ko`;
             // CORS 우회용 무료 프록시(rss2json) 사용
             const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
@@ -605,9 +701,9 @@
                     // 수동 스캔 종료 후 원래 상태 복구
                     if (refreshBtn) {
                         refreshBtn.innerText = "REFRESH";
-                        refreshBtn.style.color = "#40ff00";
-                        refreshBtn.style.borderColor = "#40ff00";
-                        refreshBtn.style.boxShadow = "0 0 8px rgba(64, 255, 0, 0.3)";
+                        refreshBtn.style.color = currentThemeColor;
+                        refreshBtn.style.borderColor = currentThemeColor;
+                        refreshBtn.style.boxShadow = `0 0 8px ${currentThemeColor}66`;
                     }
 
                     if (data.status === 'ok') {
@@ -632,7 +728,7 @@
                         newsContent.innerHTML = html;
 
                         // 스캔 된 지역이 뉴스에 있다면? 
-                        if (foundLocations.size > 0) {
+                        if (foundLocations.size > 0 && currentAppMode === 'WAR') {
                             // 기존의 마커 전부 폐기
                             while (markersGroup.children.length > 0) {
                                 markersGroup.remove(markersGroup.children[0]);
@@ -654,8 +750,8 @@
                 .catch(err => {
                     if (refreshBtn) {
                         refreshBtn.innerText = "REFRESH";
-                        refreshBtn.style.color = "#40ff00";
-                        refreshBtn.style.borderColor = "#40ff00";
+                        refreshBtn.style.color = currentThemeColor;
+                        refreshBtn.style.borderColor = currentThemeColor;
                     }
                     newsContent.innerHTML = '<div class="news-item" style="color:#f00;">ERROR: SIGNAL INTERCEPTED.</div>';
                 });
@@ -665,14 +761,47 @@
         setTimeout(fetchLiveIntel, 1000);
         setInterval(fetchLiveIntel, 300000);
 
+        // --- 📡 App Mode Management ---
+        let currentAppMode = 'WAR';
+        let currentThemeColor = '#40ff00';
+
+        const modeConfig = {
+            'WAR': { channel: 'UC6dN6Rilzh9KmzymxnZGslg', title: 'SENSOR_STUDIO_UPLINK', color: '#ff3300', label: 'WAR_DETECTION', ytIconColor: 'red' },
+            'ECONOMY': { channel: 'UCIipmgxpUxDmPP-ma3Ahvbw', title: 'MK_INVEST_NY_UPLINK', color: '#00ccff', label: 'ECONOMY_MONITOR', ytIconColor: '#00ccff' },
+            'SEISMIC': { channel: 'UCdnaqSstfC6X8V9T6vdfuNQ', title: 'SEISMIC_DATA_UPLINK', color: '#ffaa00', label: 'SEISMIC_ALERT', ytIconColor: '#ffaa00' }, // USGS 등 대체 가능
+            'PANDEMIC': { channel: 'UC6dN6Rilzh9KmzymxnZGslg', title: 'HEALTH_INTEL_UPLINK', color: '#cc00ff', label: 'BIO_RISK_MONITOR', ytIconColor: '#cc00ff' }
+        };
+
+        function setAppMode(mode) {
+            currentAppMode = mode;
+            const config = modeConfig[mode];
+            currentThemeColor = config.color;
+
+            // UI Update
+            document.getElementById('current-mode-display').innerText = config.label;
+            document.getElementById('yt-title-text').innerText = `>> ${config.title}`;
+            document.getElementById('yt-channel-icon').style.color = config.ytIconColor;
+            document.getElementById('tactical-region').innerText = `REGION: ${mode}_SCAN...`;
+
+            // Button Active State
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+            });
+
+            // Re-fetch data
+            lastYouTubeVid = ''; // Reset to ensure re-render
+            fetchLiveIntel(true);
+            fetchYouTubeFeed();
+        }
+
         // --- 📡 YouTube 실시간 동기화 (RSS 직접 파싱) ---
         const ytContent = document.getElementById('yt-content');
         let lastYouTubeVid = '';
 
         async function fetchYouTubeFeed() {
             try {
-                // 센서스튜디오 고정 채널 ID (UC6dN6Rilzh9KmzymxnZGslg)
-                const rssUrl = encodeURIComponent("https://www.youtube.com/feeds/videos.xml?channel_id=UC6dN6Rilzh9KmzymxnZGslg");
+                const channelId = modeConfig[currentAppMode].channel;
+                const rssUrl = encodeURIComponent(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`);
                 const proxyUrl = "https://api.codetabs.com/v1/proxy?quest=" + rssUrl;
 
                 const response = await fetch(proxyUrl);
@@ -690,27 +819,24 @@
 
                     const title = entry.querySelector("title").textContent;
                     const link = entry.querySelector("link").getAttribute("href");
-                    const author = entry.querySelector("author name").textContent;
 
-                    // media:group에서 썸네일과 설명 추출
+                    // media:group에서 썸네일 추출
                     const mediaGroup = entry.getElementsByTagNameNS("*", "group")[0];
                     const thumbnail = mediaGroup.getElementsByTagNameNS("*", "thumbnail")[0].getAttribute("url");
-                    const fullDesc = mediaGroup.getElementsByTagNameNS("*", "description")[0].textContent;
-                    const shortDesc = fullDesc.substring(0, 80) + "...";
 
                     const pubDate = new Date(entry.querySelector("published").textContent);
                     const timeStr = `${pubDate.getHours().toString().padStart(2, '0')}:${pubDate.getMinutes().toString().padStart(2, '0')}`;
 
-                    console.log("Receiving Youtube Alert (RSS):", title);
+                    console.log(`Receiving ${currentAppMode} Youtube Alert (RSS):`, title);
 
                     const html = `
-                        <div class="yt-card" onclick="window.open('${link}', '_blank')" style="border: 1px solid #40ff00; padding:10px; border-radius:4px; background:rgba(0,40,0,0.6); display:flex; gap:12px; align-items:center; cursor:pointer;">
+                        <div class="yt-card" onclick="window.open('${link}', '_blank')" style="border: 1px solid ${currentThemeColor}; padding:10px; border-radius:4px; background:rgba(0,40,0,0.6); display:flex; gap:12px; align-items:center; cursor:pointer;">
                             <div class="yt-thumbnail" style="flex: 0 0 100px; position:relative;">
-                                <img src="${thumbnail}" alt="thumbnail" style="width:100%; display:block; border-radius:4px;">
-                                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(255,0,0,0.8); color:#fff; padding:4px 8px; border-radius:12px; font-weight:bold; font-size:10px; pointer-events:none;">▶ PLAY</div>
+                                <img src="${thumbnail}" alt="thumbnail" style="width:100%; display:block; border-radius:4px; border: 1px solid ${currentThemeColor};">
+                                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:${modeConfig[currentAppMode].ytIconColor}; color:#fff; padding:4px 8px; border-radius:12px; font-weight:bold; font-size:10px; pointer-events:none;">▶ PLAY</div>
                             </div>
                             <div class="yt-info" style="flex: 1; min-width: 0; line-height: 1.3;">
-                                <div style="color:#f00; font-weight:bold; font-size:10px; margin-bottom:4px;">NEW INTEL DETECTED</div>
+                                <div style="color:${currentThemeColor}; font-weight:bold; font-size:10px; margin-bottom:4px;">NEW ${currentAppMode} INTEL</div>
                                 <div style="color:#fff; font-size:13px; font-weight:bold; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;">${title}</div>
                                 <div style="margin-top:4px; color:#aaa; font-size:10px;">${timeStr}</div>
                             </div>
@@ -720,8 +846,8 @@
 
                     // 시각적 피드백
                     const panel = document.getElementById('youtube-panel');
-                    panel.style.boxShadow = "0 0 30px rgba(255, 0, 0, 0.8)";
-                    panel.style.borderColor = "#f00";
+                    panel.style.boxShadow = `0 0 30px ${currentThemeColor}`;
+                    panel.style.borderColor = currentThemeColor;
                     setTimeout(() => {
                         panel.style.boxShadow = "0 0 20px rgba(64, 255, 0, 0.1)";
                         panel.style.borderColor = "#40ff00";
